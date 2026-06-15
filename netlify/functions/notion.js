@@ -1,23 +1,8 @@
 // netlify/functions/notion.js
-// Toutes les interactions Notion passent par ici — la clé API n'est jamais exposée côté client.
-//
-// Variables d'environnement requises dans Netlify :
-//   NOTION_TOKEN          → ton Integration Token (secret_xxx)
-//   NOTION_APPRENANTS_DB  → ID de la base "Bd-Apprenants"           : ab92bef1fc0949f284dc7486c7b4c7a0
-//   NOTION_EXERCICES_DB   → ID de la base "Exercices Apprenant"     : 812cc601380a4525b4e0a328fd775654
-//
-// Architecture :
-//   - handleRegister : crée la fiche apprenant + duplique la page template exercices
-//   - handleComplete : marque la fin du parcours (date + checkbox)
-//
-// Template exercices (page Notion à NE PAS supprimer) :
-//   ID : 37f45dcc4800815b9344eef3ccd5b9a7
-//   URL : https://app.notion.com/p/37f45dcc4800815b9344eef3ccd5b9a7
+// Variables d'environnement requises :
+//   NOTION_TOKEN, NOTION_APPRENANTS_DB, NOTION_EXERCICES_DB
 
 const NOTION_API = "https://api.notion.com/v1";
-
-// ID de la page template exercices créée dans Notion
-// ⚠️ Ne jamais supprimer cette page dans Notion
 const TEMPLATE_PAGE_ID = "37f45dcc-4800-815b-9344-eef3ccd5b9a7";
 
 function getHeaders() {
@@ -28,7 +13,6 @@ function getHeaders() {
   };
 }
 
-// ---------- helpers ----------
 async function notionFetch(path, method = "GET", body = null) {
   const opts = { method, headers: getHeaders() };
   if (body) opts.body = JSON.stringify(body);
@@ -38,7 +22,6 @@ async function notionFetch(path, method = "GET", body = null) {
   return data;
 }
 
-// ---------- Récupère tous les blocs enfants d'une page (paginé) ----------
 async function fetchAllBlocks(pageId) {
   let blocks = [];
   let cursor = undefined;
@@ -51,21 +34,57 @@ async function fetchAllBlocks(pageId) {
   return blocks;
 }
 
-// ---------- Nettoie un bloc pour le réutiliser (supprime les IDs Notion) ----------
-function cleanBlock(block) {
-  const { id, created_time, last_edited_time, created_by, last_edited_by,
-          has_children, parent, archived, ...clean } = block;
-  return clean;
+function cleanRichText(rtArray) {
+  if (!rtArray) return [];
+  return rtArray.map(rt => {
+    const clean = { type: rt.type };
+    if (rt.type === "text") {
+      clean.text = { content: rt.text.content };
+      if (rt.text.link) clean.text.link = rt.text.link;
+    }
+    if (rt.annotations) clean.annotations = rt.annotations;
+    return clean;
+  });
 }
 
-// ---------- Handlers ----------
+function cleanBlock(block) {
+  const type = block.type;
+  if (!type) return null;
+
+  const inner = block[type];
+  if (!inner) return null;
+
+  const cleaned = { object: "block", type };
+
+  const cleanedInner = {};
+
+  // rich_text
+  if (inner.rich_text !== undefined) {
+    cleanedInner.rich_text = cleanRichText(inner.rich_text);
+  }
+
+  // checked (to_do)
+  if (inner.checked !== undefined) cleanedInner.checked = inner.checked;
+
+  // color
+  if (inner.color && inner.color !== "default") cleanedInner.color = inner.color;
+
+  // icon (callout)
+  if (inner.icon) cleanedInner.icon = inner.icon;
+
+  // language (code)
+  if (inner.language) cleanedInner.language = inner.language;
+
+  cleaned[type] = cleanedInner;
+  return cleaned;
+}
 
 async function handleRegister(body) {
   const { prenom, nom, email, niveau } = body;
   const nomComplet = `${prenom} ${nom}`.trim();
   const now = new Date().toISOString();
 
-  // 1. Créer la fiche apprenant dans Bd-Apprenants
+  // 1. Créer fiche apprenant
   const apprenantPage = await notionFetch("/pages", "POST", {
     parent: { database_id: process.env.NOTION_APPRENANTS_DB },
     properties: {
@@ -77,91 +96,76 @@ async function handleRegister(body) {
       "Date de début":  { date: { start: now } },
     },
   });
-
   const apprenantId = apprenantPage.id;
 
-  // 2. Récupérer les blocs du template exercices
-  const templateBlocks = await fetchAllBlocks(TEMPLATE_PAGE_ID);
-  const cleanedBlocks = templateBlocks.map(cleanBlock);
+  // 2. Récupérer et nettoyer les blocs du template
+  const rawBlocks = await fetchAllBlocks(TEMPLATE_PAGE_ID);
+  const children = rawBlocks.map(cleanBlock).filter(Boolean);
 
-  // 3. Créer la page exercices personnalisée dans Exercices Apprenant
-  //    avec le contenu dupliqué du template + les propriétés apprenant
+  // 3. Créer page exercices avec le contenu du template
   const exercicesPage = await notionFetch("/pages", "POST", {
     parent: { database_id: process.env.NOTION_EXERCICES_DB },
     properties: {
-      "Nom":            { title:     [{ text: { content: `Exercices — ${nomComplet}` } }] },
-      "Apprenant":      { relation:  [{ id: apprenantId }] },
-      "Nom Apprenant":  { rich_text: [{ text: { content: nomComplet } }] },
-      "Email":          { email: email },
+      "Nom":               { title:     [{ text: { content: `Exercices — ${nomComplet}` } }] },
+      "Apprenant":         { relation:  [{ id: apprenantId }] },
+      "Nom Apprenant":     { rich_text: [{ text: { content: nomComplet } }] },
+      "Email":             { email: email },
       "Statut correction": { select: { name: "À corriger" } },
     },
-    icon:     { type: "emoji", emoji: "📋" },
-    children: cleanedBlocks,
+    icon: { type: "emoji", emoji: "📋" },
+    children,
   });
 
-  // 4. Mettre à jour la fiche apprenant avec le lien retour vers les exercices
+  // 4. Lien retour apprenant → exercices
   await notionFetch(`/pages/${apprenantId}`, "PATCH", {
     properties: {
       "Page exercices": { relation: [{ id: exercicesPage.id }] },
     },
   });
 
-  return {
-    apprenantId,
-    exercicesUrl: exercicesPage.url,
-    nomComplet,
-  };
+  return { apprenantId, exercicesUrl: exercicesPage.url, nomComplet };
 }
 
 async function handleComplete(body) {
   const { apprenantId } = body;
   const now = new Date().toISOString();
-
   await notionFetch(`/pages/${apprenantId}`, "PATCH", {
     properties: {
       "Date de fin":      { date: { start: now } },
       "Parcours terminé": { checkbox: true },
     },
   });
-
   return { ok: true };
 }
 
-// ---------- Main handler ----------
 exports.handler = async (event) => {
-  const corsHeaders = {
+  const cors = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
   };
 
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: corsHeaders, body: "" };
-  }
-
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: corsHeaders, body: "Method Not Allowed" };
-  }
+  if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers: cors, body: "" };
+  if (event.httpMethod !== "POST") return { statusCode: 405, headers: cors, body: "Method Not Allowed" };
 
   try {
     const body = JSON.parse(event.body || "{}");
     const { action } = body;
-
     let result;
-    if (action === "register")       result = await handleRegister(body);
-    else if (action === "complete")  result = await handleComplete(body);
+    if (action === "register")      result = await handleRegister(body);
+    else if (action === "complete") result = await handleComplete(body);
     else throw new Error(`Action inconnue : ${action}`);
 
     return {
       statusCode: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
       body: JSON.stringify(result),
     };
   } catch (err) {
     console.error("Notion function error:", err);
     return {
       statusCode: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...cors, "Content-Type": "application/json" },
       body: JSON.stringify({ error: err.message }),
     };
   }
