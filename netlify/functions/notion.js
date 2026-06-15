@@ -101,8 +101,13 @@ async function handleRegister(body) {
   // 2. Récupérer et nettoyer les blocs du template
   const rawBlocks = await fetchAllBlocks(TEMPLATE_PAGE_ID);
   const children = rawBlocks.map(cleanBlock).filter(Boolean);
+  const firstBatch = children.slice(0, 100);
+  const restBatches = [];
+  for (let i = 100; i < children.length; i += 100) {
+    restBatches.push(children.slice(i, i + 100));
+  }
 
-  // 3. Créer page exercices avec le contenu du template
+  // 3. Créer page exercices avec les 100 premiers blocs
   const exercicesPage = await notionFetch("/pages", "POST", {
     parent: { database_id: process.env.NOTION_EXERCICES_DB },
     properties: {
@@ -113,8 +118,13 @@ async function handleRegister(body) {
       "Statut correction": { select: { name: "À corriger" } },
     },
     icon: { type: "emoji", emoji: "📋" },
-    children,
+    children: firstBatch,
   });
+
+  // 3b. Ajouter les blocs restants par lots de 100
+  for (const batch of restBatches) {
+    await notionFetch(`/blocks/${exercicesPage.id}/children`, "PATCH", { children: batch });
+  }
 
   // 4. Lien retour apprenant → exercices
   await notionFetch(`/pages/${apprenantId}`, "PATCH", {
