@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcours Apprenant — Débuter sur Notion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root{
+  --paper:#F4F0E7;--paper-2:#FBF8F1;--ink:#22201C;--muted:#6E665B;--faint:#A39A8C;
+  --line:rgba(34,32,28,.12);--line-strong:rgba(34,32,28,.22);
+  --accent:#C8552F;--accent-soft:#F2DDD2;
+  --sage:#4E6B52;--sage-soft:#DDE7DA;
+  --notion:#000000;--notion-soft:#F0F0EE;
+  --shadow:0 1px 2px rgba(34,32,28,.05),0 8px 30px rgba(34,32,28,.07);
+  --radius:16px;
+  --display:"Fraunces",Georgia,serif;
+  --body:"Hanken Grotesk",system-ui,sans-serif;
+  --mono:"JetBrains Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+.app{position:relative;z-index:1;display:grid;grid-template-columns:312px 1fr;min-height:100vh}
+.sidebar{border-right:1px solid var(--line);background:rgba(251,248,241,.6);backdrop-filter:blur(6px);
+  padding:30px 24px;display:flex;flex-direction:column;gap:26px;
+  position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{overflow-x:hidden}
+.scroller{max-width:760px;margin:0 auto;padding:64px 48px 120px}
+
+/* ─── SIDEBAR ─────────────────────────────────────────────── */
+.brand{display:flex;align-items:center;gap:11px}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:var(--ink);color:var(--paper);
+  display:grid;place-items:center;font-family:var(--display);font-size:20px;font-weight:600;flex-shrink:0}
+.brand .t1{font-family:var(--display);font-size:16px;font-weight:600;line-height:1.1}
+.brand .t2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:2px}
+.progress-card{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--paper-2);
+  display:flex;align-items:center;gap:16px}
+.ring{position:relative;width:64px;height:64px;flex-shrink:0}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--display);font-size:17px;font-weight:600}
+.progress-card .lbl{font-size:12.5px;color:var(--muted);line-height:1.35}
+.progress-card .lbl b{display:block;font-family:var(--display);font-size:14px;color:var(--ink);font-weight:600}
+
+/* notion link in sidebar */
+.notion-link-sidebar{display:none;border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;background:var(--notion-soft);text-decoration:none;gap:8px;align-items:center}
+.notion-link-sidebar.visible{display:flex}
+.notion-link-sidebar .nl-ic{font-size:16px}
+.notion-link-sidebar .nl-txt{font-size:12px;color:var(--muted);line-height:1.3}
+.notion-link-sidebar .nl-txt b{display:block;color:var(--ink);font-size:12.5px}
+.notion-link-sidebar:hover{border-color:var(--ink);background:var(--paper-2)}
+
+.nav{display:flex;flex-direction:column;gap:20px}
+.nav-group .gh{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:9px;padding-left:4px;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  background:none;border:none;cursor:pointer;font-family:var(--body);font-size:13.5px;
+  color:var(--muted);padding:7px 9px;border-radius:9px;transition:.18s;line-height:1.25}
+.nav-item:hover{background:rgba(34,32,28,.05);color:var(--ink);transform:translateX(2px)}
+.nav-item.active{background:var(--ink);color:var(--paper)}
+.nav-item.active .tick{border-color:var(--paper)}
+.tick{width:17px;height:17px;border-radius:50%;border:1.6px solid var(--line-strong);
+  flex-shrink:0;display:grid;place-items:center;transition:.2s}
+.nav-item.done .tick{background:var(--sage);border-color:var(--sage)}
+.nav-item.done .tick svg{opacity:1}
+.tick svg{opacity:0;width:9px;height:9px;stroke:#fff;stroke-width:3;fill:none}
+.reset{margin-top:auto;font-size:11.5px;color:var(--faint);background:none;border:none;
+  cursor:pointer;text-align:left;padding:6px 4px;font-family:var(--body);transition:.15s}
+.reset:hover{color:var(--accent)}
+
+/* ─── CONTENT ─────────────────────────────────────────────── */
+.view{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.stagger>*{animation:fade .5s ease both}
+.stagger>*:nth-child(1){animation-delay:.02s}.stagger>*:nth-child(2){animation-delay:.08s}
+.stagger>*:nth-child(3){animation-delay:.14s}.stagger>*:nth-child(4){animation-delay:.2s}
+.stagger>*:nth-child(5){animation-delay:.26s}.stagger>*:nth-child(6){animation-delay:.32s}
+.stagger>*:nth-child(7){animation-delay:.38s}.stagger>*:nth-child(8){animation-delay:.44s}
+
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(34px,5vw,54px);line-height:1.04;letter-spacing:-.01em;margin-bottom:18px}
+.lead{font-size:18px;color:var(--muted);max-width:60ch}
+h2{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.1;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+h2 .ic{font-size:30px;line-height:1}
+.crumb{font-size:12.5px;letter-spacing:.05em;color:var(--faint);text-transform:uppercase;font-weight:600;margin-bottom:18px}
+.points{list-style:none;margin:26px 0;display:flex;flex-direction:column;gap:2px}
+.points li{position:relative;padding:13px 0 13px 30px;border-bottom:1px solid var(--line);font-size:15.5px}
+.points li:last-child{border-bottom:none}
+.points li::before{content:"";position:absolute;left:4px;top:21px;width:7px;height:7px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+.points b{font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--ink);color:var(--paper);padding:1px 7px;border-radius:5px;font-weight:500}
+.tip{display:flex;gap:13px;background:var(--accent-soft);border-radius:12px;padding:16px 18px;margin:26px 0;border:1px solid rgba(200,85,47,.2)}
+.tip .ti{font-size:18px;flex-shrink:0}
+.tip p{font-size:14.5px;color:#7a3a22}
+
+/* ─── EXERCISE BOX ─────────────────────────────────────────── */
+.exercise{border:1.5px dashed var(--line-strong);border-radius:14px;padding:22px 24px;margin:28px 0;transition:.3s}
+.exercise.done{border-style:solid;border-color:var(--sage);background:var(--sage-soft)}
+.xh{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage);font-weight:700;margin-bottom:8px}
+.xt{font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:8px}
+.exercise ul{margin:10px 0 14px 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.exercise ul li{font-size:14.5px;color:var(--muted)}
+.check-btn{display:flex;align-items:center;gap:9px;background:none;border:1.5px solid var(--line-strong);
+  border-radius:9px;padding:9px 16px;cursor:pointer;font-family:var(--body);font-size:14px;
+  color:var(--muted);transition:.2s;margin-top:6px}
+.check-btn:hover{border-color:var(--sage);color:var(--sage)}
+.exercise.done .check-btn{border-color:var(--sage);color:var(--sage);background:rgba(78,107,82,.08)}
+.cb{width:18px;height:18px;border-radius:5px;border:1.6px solid currentColor;
+  display:grid;place-items:center;flex-shrink:0;transition:.2s}
+.cb svg{opacity:0;width:10px;height:10px;stroke:currentColor;stroke-width:3;fill:none;transition:.2s}
+.exercise.done .cb svg{opacity:1}
+
+/* Notion link block inside lesson */
+.notion-exercise-link{display:none;align-items:center;gap:12px;padding:14px 18px;
+  border-radius:12px;background:var(--notion-soft);border:1px solid rgba(0,0,0,.1);
+  text-decoration:none;margin-top:14px;transition:.2s}
+.notion-exercise-link.visible{display:flex}
+.notion-exercise-link:hover{border-color:var(--ink);transform:translateY(-1px)}
+.notion-exercise-link .nel-ic{font-size:22px}
+.notion-exercise-link .nel-body{}
+.notion-exercise-link .nel-body b{display:block;font-size:14px;color:var(--ink)}
+.notion-exercise-link .nel-body small{font-size:12.5px;color:var(--muted)}
+
+/* ─── NAV ROW ─────────────────────────────────────────────── */
+.nav-row{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-top:32px;margin-top:32px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{font-family:var(--body);font-size:14px;font-weight:500;padding:10px 20px;
+  border-radius:10px;border:1.5px solid var(--line-strong);background:var(--paper-2);
+  color:var(--ink);cursor:pointer;transition:.18s}
+.btn:hover{border-color:var(--ink);background:var(--paper)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:hover{background:#3a3730}
+.btn.sage{background:var(--sage);color:#fff;border-color:var(--sage)}
+.btn.sage:hover{background:#3d5640}
+.btn.danger{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ─── HOME PAGE ─────────────────────────────────────────────── */
+.meta{display:flex;gap:28px;margin:28px 0;flex-wrap:wrap}
+.meta div{display:flex;flex-direction:column;gap:2px}
+.meta b{font-family:var(--display);font-size:26px;font-weight:600}
+.meta span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0 32px}
+.learn-card{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--paper-2)}
+.lc-ic{font-size:26px;margin-bottom:10px}
+.learn-card h3{font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:5px}
+.learn-card p{font-size:13.5px;color:var(--muted)}
+.how{display:flex;flex-direction:column;gap:12px;margin:18px 0 28px}
+.how-step{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;
+  border:1px solid var(--line);border-radius:12px;background:var(--paper-2)}
+.how-step .n{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--paper);
+  display:grid;place-items:center;font-family:var(--display);font-size:14px;font-weight:600;flex-shrink:0}
+.how-step p{font-size:14px;color:var(--muted)}
+
+/* ─── NOTION WHAT IS ────────────────────────────────────────── */
+.notion-intro{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+.ni-card{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--paper-2)}
+.ni-ic{font-size:28px;margin-bottom:10px}
+.ni-card h3{font-size:14.5px;font-weight:600;margin-bottom:6px}
+.ni-card p{font-size:13px;color:var(--muted);line-height:1.5}
+.notion-vs{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;margin:20px 0}
+.vs-col{padding:18px}
+.vs-col:first-child{border-right:1px solid var(--line)}
+.vs-col .vc-h{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:12px}
+.vs-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.vs-col ul li{font-size:13.5px;display:flex;align-items:flex-start;gap:7px}
+.vs-col ul li::before{content:"";width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.vs-col.old ul li::before{background:var(--faint)}
+.vs-col.new ul li::before{background:var(--sage)}
+
+/* ─── MOCK DIAGRAMS ─────────────────────────────────────────── */
+.mock{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:26px 0;background:var(--paper-2)}
+.mock-bar{display:flex;align-items:center;gap:5px;padding:9px 14px;border-bottom:1px solid var(--line);background:rgba(34,32,28,.03)}
+.mock-bar i{width:10px;height:10px;border-radius:50%;background:var(--line-strong)}
+.mock-bar i:nth-child(1){background:#fc5c57}.mock-bar i:nth-child(2){background:#febc2e}.mock-bar i:nth-child(3){background:#28c840}
+.mock-bar span{margin-left:8px;font-size:11.5px;color:var(--faint);font-family:var(--mono)}
+.mock-body{display:grid;grid-template-columns:180px 1fr}
+.mock-side{border-right:1px solid var(--line);padding:12px;background:rgba(34,32,28,.02)}
+.mock-search{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--faint);
+  padding:7px 9px;border:1px solid var(--line);border-radius:6px;margin-bottom:10px;cursor:pointer}
+.mock-search kbd{font-family:var(--mono);font-size:10px;background:var(--line);padding:2px 4px;border-radius:3px}
+.sec{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--faint);padding:4px 6px;font-weight:700}
+.it{font-size:12px;padding:5px 8px;border-radius:6px;cursor:pointer;color:var(--muted)}
+.it.on{background:var(--ink);color:var(--paper)}
+.it.sub{padding-left:22px}
+.mock-main{padding:16px}
+.mock-pad{padding:16px}
+.mock-cap{padding:8px 14px;font-size:12px;color:var(--faint);border-top:1px solid var(--line);font-style:italic;background:rgba(34,32,28,.02)}
+.mock-slash{font-family:var(--mono);font-size:14px;color:var(--ink);padding:8px 4px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.mock-menu{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper-2);box-shadow:var(--shadow)}
+.mh{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);padding:8px 10px;font-weight:700;border-bottom:1px solid var(--line)}
+.mi{padding:8px 10px;font-size:12.5px;color:var(--muted);display:flex;gap:8px}
+.mi.on{background:rgba(34,32,28,.06);color:var(--ink)}
+.mock-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:10px}
+.mock-tabs span{padding:6px 12px;font-size:12px;color:var(--faint);border-bottom:2px solid transparent;cursor:pointer}
+.mock-tabs span.on{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+.mock-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.mock-table th{text-align:left;padding:6px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);border-bottom:1px solid var(--line);font-weight:700}
+.mock-table td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
+.tag.o{background:#FEF3C7;color:#92400E}.tag.g{background:var(--sage-soft);color:var(--sage)}.tag.b{background:#DBEAFE;color:#1E40AF}
+.rel{display:flex;align-items:center;gap:8px}
+.tbl{flex:1;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tt{font-size:10.5px;font-weight:700;padding:7px 10px;background:rgba(34,32,28,.04);border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+.rw{font-size:12px;padding:6px 10px;border-bottom:1px solid var(--line);color:var(--muted)}
+.rw:last-child{border-bottom:none}
+.link{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ln{width:2px;height:30px;background:var(--line-strong)}
+.link small{font-size:10px;color:var(--faint);white-space:nowrap}
+.kan{display:flex;gap:8px}
+.col{flex:1;background:rgba(34,32,28,.03);border-radius:8px;padding:8px}
+.ch{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-bottom:8px}
+.card{background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--muted);margin-bottom:6px}
+.flow{display:flex;flex-direction:column;align-items:center;gap:0}
+.node{border:1.5px solid var(--line-strong);border-radius:10px;padding:12px 16px;width:100%;background:var(--paper-2)}
+.lab{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);font-weight:700;margin-bottom:4px}
+.val{font-size:13.5px;font-weight:500}
+.val small{display:block;font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:400}
+.arr{width:2px;height:20px;background:var(--line-strong);margin:0 auto}
+
+/* ─── QUIZ ────────────────────────────────────────────────── */
+.locked-note{background:var(--accent-soft);border:1px solid rgba(200,85,47,.3);border-radius:12px;
+  padding:16px 20px;font-size:14.5px;color:#7a3a22;margin:24px 0}
+.q{border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px;background:var(--paper-2)}
+.qn{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:8px}
+.qt{font-size:16px;font-weight:600;margin-bottom:14px;line-height:1.4}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:9px;margin-bottom:8px;cursor:pointer;transition:.2s;font-size:14.5px}
+.opt:hover{border-color:var(--ink);background:rgba(34,32,28,.03)}
+.opt.sel{border-color:var(--ink);background:rgba(34,32,28,.06)}
+.opt.correct{border-color:var(--sage);background:var(--sage-soft)}
+.opt.wrong{border-color:var(--accent);background:var(--accent-soft)}
+.dot{width:16px;height:16px;border-radius:50%;border:1.6px solid var(--line-strong);flex-shrink:0;margin-top:1px;transition:.2s}
+.opt.sel .dot{background:var(--ink);border-color:var(--ink)}
+.q.locked .opt{cursor:default}
+.qexp{font-size:13px;color:var(--muted);padding:10px 14px;background:rgba(34,32,28,.04);
+  border-radius:8px;margin-top:10px;display:none;border-left:3px solid var(--sage)}
+.qexp.show{display:block}
+.result{border-radius:16px;padding:24px;margin-bottom:28px;display:none;text-align:center}
+.result.show{display:block}
+.result.pass{background:var(--sage-soft);border:1.5px solid var(--sage)}
+.result.fail{background:var(--accent-soft);border:1.5px solid var(--accent)}
+.score{font-family:var(--display);font-size:44px;font-weight:600;line-height:1}
+.msg{font-size:15px;margin-top:10px;color:var(--muted)}
+
+/* ─── CERTIFICATE ─────────────────────────────────────────── */
+.cert{border:1px solid var(--line);border-radius:20px;padding:48px;text-align:center;
+  background:var(--paper-2);margin-bottom:28px;position:relative;overflow:hidden}
+.cert::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%, rgba(200,85,47,.06) 0%, transparent 70%)}
+.seal{font-size:54px;margin-bottom:18px;display:block}
+.ce{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:12px}
+.cert h2{justify-content:center;font-size:28px}
+.nm{font-family:var(--display);font-size:32px;font-weight:500;font-style:italic;
+  color:var(--accent);margin:12px 0;min-height:40px}
+.cert .sub{font-size:14.5px;color:var(--muted);max-width:50ch;margin:0 auto}
+input#nameInput{font-family:var(--body);font-size:20px;border:none;border-bottom:2px solid var(--line-strong);
+  background:transparent;text-align:center;padding:8px 16px;width:280px;outline:none;color:var(--ink);margin:8px 0}
+input#nameInput:focus{border-bottom-color:var(--accent)}
+
+/* ─── ONBOARDING MODAL ─────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(34,32,28,.45);backdrop-filter:blur(4px);
+  z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--paper-2);border-radius:20px;padding:40px;max-width:520px;width:100%;
+  box-shadow:0 24px 80px rgba(34,32,28,.2);position:relative;animation:fade .3s ease}
+.modal h2{font-family:var(--display);font-size:24px;font-weight:600;margin-bottom:6px;display:block}
+.modal .sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-group label{font-size:12.5px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.form-group input,.form-group select{font-family:var(--body);font-size:14.5px;padding:11px 14px;
+  border:1.5px solid var(--line-strong);border-radius:10px;background:var(--paper);
+  color:var(--ink);outline:none;transition:.2s;width:100%}
+.form-group input:focus,.form-group select:focus{border-color:var(--ink)}
+.form-group .hint{font-size:12px;color:var(--faint)}
+.niveau-stars{display:flex;gap:8px;margin-top:4px}
+.star-btn{width:38px;height:38px;border-radius:8px;border:1.5px solid var(--line-strong);
+  background:none;cursor:pointer;font-size:18px;transition:.2s;display:grid;place-items:center}
+.star-btn.active{background:var(--ink);border-color:var(--ink)}
+.modal-error{font-size:13px;color:var(--accent);margin-bottom:10px;display:none}
+.modal-error.show{display:block}
+.loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── SETUP SCREEN ────────────────────────────────────────── */
+.setup-steps{display:flex;flex-direction:column;gap:14px;margin:28px 0}
+.setup-step{display:flex;gap:16px;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--paper-2);align-items:flex-start}
+.setup-step.highlight{border-color:var(--accent);background:var(--accent-soft)}
+.setup-step.done-step{border-color:var(--sage);background:var(--sage-soft)}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);
+  display:grid;place-items:center;font-family:var(--display);font-size:15px;font-weight:600;flex-shrink:0;margin-top:1px}
+.setup-step.highlight .step-num{background:var(--accent)}
+.step-body{flex:1}
+.step-body b{display:block;font-size:15px;font-weight:600;margin-bottom:4px}
+.step-body p{font-size:14px;color:var(--muted);line-height:1.5}
+.step-body .step-detail{margin-top:10px;padding:12px 14px;background:var(--paper);border-radius:9px;
+  border:1px solid var(--line);font-size:13.5px;color:var(--muted);line-height:1.6}
+.copy-email{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--paper);
+  border:none;border-radius:8px;padding:7px 14px;font-family:var(--mono);font-size:13px;cursor:pointer;
+  transition:.2s;margin-top:10px;font-weight:500}
+.copy-email:hover{background:#3a3730}
+.copy-email.copied{background:var(--sage)}
+.setup-confirm{border:1.5px dashed var(--line-strong);border-radius:14px;padding:20px 22px;margin-top:6px;
+  display:flex;align-items:center;gap:14px;cursor:pointer;transition:.2s}
+.setup-confirm:hover{border-color:var(--sage);background:var(--sage-soft)}
+.setup-confirm.checked{border-style:solid;border-color:var(--sage);background:var(--sage-soft)}
+.setup-confirm .sc-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--line-strong);
+  display:grid;place-items:center;flex-shrink:0;transition:.2s}
+.setup-confirm.checked .sc-box{background:var(--sage);border-color:var(--sage)}
+.setup-confirm .sc-box svg{opacity:0;width:12px;height:12px;stroke:#fff;stroke-width:3;fill:none}
+.setup-confirm.checked .sc-box svg{opacity:1}
+.setup-confirm span{font-size:14.5px;font-weight:500}
+
+/* ─── COMPLETE MODAL ──────────────────────────────────────── */
+.complete-banner{background:linear-gradient(135deg,var(--sage-soft),#f0f7f0);
+  border:1.5px solid var(--sage);border-radius:16px;padding:24px 28px;margin:28px 0;text-align:center}
+.complete-banner h3{font-family:var(--display);font-size:22px;font-weight:600;color:var(--sage);margin-bottom:8px}
+.complete-banner p{font-size:14px;color:var(--muted);margin-bottom:16px}
+
+/* ─── MOBILE ─────────────────────────────────────────────── */
+.menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:50;
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--line-strong);
+  background:var(--paper-2);cursor:pointer;font-size:18px}
+.scrim{display:none;position:fixed;inset:0;background:rgba(34,32,28,.4);z-index:40}
+
+@media(max-width:768px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;height:100%;width:300px;z-index:45;
+    transform:translateX(-100%);transition:.3s;padding-top:60px}
+  .sidebar.open{transform:none}
+  .scrim{display:none}.scrim.show{display:block}
+  .menu-btn{display:grid;place-items:center}
+  .scroller{padding:50px 22px 80px}
+  .form-row{grid-template-columns:1fr}
+  .learn-grid{grid-template-columns:1fr}
+  .notion-intro{grid-template-columns:1fr}
+  .notion-vs{grid-template-columns:1fr}
+  .vs-col:first-child{border-right:none;border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn">☰</button>
+<div class="scrim" id="scrim"></div>
+
+<!-- ─── ONBOARDING MODAL ─────────────────────────────────── -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="eyebrow" style="margin-bottom:6px">Bienvenue 👋</div>
+    <h2>Avant de commencer</h2>
+    <p class="sub">Ces informations permettent de créer ton espace d'exercices personnalisé dans Notion.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Prénom *</label>
+        <input type="text" id="inp-prenom" placeholder="Marie" autocomplete="given-name">
+      </div>
+      <div class="form-group">
+        <label>Nom *</label>
+        <input type="text" id="inp-nom" placeholder="Dupont" autocomplete="family-name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Adresse e-mail *</label>
+      <input type="email" id="inp-email" placeholder="marie.dupont@exemple.fr" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>Ton niveau sur Notion</label>
+      <p class="hint" style="margin-bottom:8px">1 = jamais utilisé · 5 = utilisateur régulier</p>
+      <div class="niveau-stars" id="niveauStars">
+        <button class="star-btn" data-n="1">1</button>
+        <button class="star-btn" data-n="2">2</button>
+        <button class="star-btn" data-n="3">3</button>
+        <button class="star-btn" data-n="4">4</button>
+        <button class="star-btn" data-n="5">5</button>
+      </div>
+    </div>
+    <p class="modal-error" id="modalError">Merci de remplir tous les champs obligatoires.</p>
+    <button class="btn primary" id="modalSubmit" style="width:100%;padding:14px;font-size:15px;margin-top:4px">
+      Démarrer le parcours →
+    </button>
+  </div>
+</div>
+
+<!-- ─── APP ──────────────────────────────────────────────── -->
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="mark">N</div>
+      <div>
+        <div class="t1">Parcours Notion</div>
+        <div class="t2">Débutant → Autonome</div>
+      </div>
+    </div>
+    <div class="progress-card">
+      <div class="ring">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="27" fill="none" stroke="var(--line)" stroke-width="5"/>
+          <circle id="ringFg" cx="32" cy="32" r="27" fill="none" stroke="var(--sage)" stroke-width="5"
+            stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6" style="transition:.6s"/>
+        </svg>
+        <div class="pct"><span id="pctTxt">0%</span></div>
+      </div>
+      <div class="lbl">
+        <b id="stepTxt">0 / 12 étapes</b>
+        Progression sauvegardée
+      </div>
+    </div>
+
+    <!-- Lien Notion exercises -->
+    <a class="notion-link-sidebar" id="notionSidebarLink" href="#" target="_blank">
+      <span class="nl-ic">📝</span>
+      <div class="nl-txt">
+        <b>Mes exercices Notion</b>
+        Ouvrir ma page de travail
+      </div>
+    </a>
+
+    <nav class="nav" id="nav"></nav>
+    <button class="reset" id="resetBtn">↺ Réinitialiser la progression</button>
+  </aside>
+
+  <main class="main">
+    <div class="scroller">
+      <div id="content"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════════════════ */
+// L'URL de la function Netlify — se configure automatiquement
+const NOTION_FN = "/.netlify/functions/notion";
+
+/* ═══════════════════════════════════════════════════════════
+   CURRICULUM
+══════════════════════════════════════════════════════════ */
+const MODULES = [
+{id:"m0",titre:"Préambule · Qu'est-ce que Notion ?",lecons:[
+  {id:"0.1",ic:"💡",titre:"Notion en 5 minutes",
+   intro:"Notion est un outil tout-en-un qui remplace à la fois tes notes, tes tableaux, tes bases de données et tes wikis — le tout dans un seul espace de travail.",
+   points:[
+     "<b>Créer</b> : pages, blocs, bases de données, wikis — tout dans un seul endroit.",
+     "<b>Organiser</b> : hiérarchie de pages, tags, vues multiples sur tes données.",
+     "<b>Collaborer</b> : partage, commentaires, édition en temps réel.",
+     "<b>Automatiser</b> : relations entre bases, rollups, formules, et bientôt l'IA."
+   ],
+   tip:"Notion est <b>modulaire</b> : commence simple (une page de notes) et ajoute de la complexité au fur et à mesure de tes besoins.",
+   exTitre:"Crée ton compte",
+   exSteps:["Rends-toi sur <b>notion.com</b> et crée un compte gratuit","Explore la page d'accueil et repère la barre latérale gauche","Clique sur « Nouvelle page » pour créer ta toute première page"],
+   ex:"Crée un compte sur notion.com, explore l'interface 5 minutes, et crée ta première page."
+  }
+]},
+{id:"m1",titre:"Module 1 · Fondations",lecons:[
+  {id:"1.1",ic:"📄",titre:"Pages & sous-pages",
+   intro:"Notion s'organise en pages. Chaque page peut contenir du contenu et des sous-pages — comme un dossier qui contient des fichiers, mais en beaucoup plus flexible.",
+   points:[
+     "Une page peut avoir une <b>icône</b> et une <b>image de couverture</b> pour la personnaliser.",
+     "Les <b>sous-pages</b> s'imbriquent : tu vois la hiérarchie dans la barre latérale.",
+     "Déplace une page par <b>glisser-déposer</b> dans la sidebar, ou via le menu ···",
+     "<b>⌘/Ctrl + P</b> : recherche universelle pour retrouver n'importe quelle page en 2 secondes."
+   ],
+   tip:"Pense à ta barre latérale comme à ta table des matières. <b>Structure d'abord, contenu ensuite.</b>",
+   exTitre:"Construis ta hiérarchie",
+   exSteps:["Crée une page « Mon Espace » avec une icône 🏠","Crée 3 sous-pages : Projets, Notes, Ressources","Déplace une sous-page par drag & drop dans la sidebar","Teste ⌘/Ctrl + P pour retrouver ta page"],
+   ex:"Crée une page racine « Mon Espace » avec 3 sous-pages, puis navigue entre elles avec ⌘ P."
+  },
+  {id:"1.2",ic:"🧱",titre:"Les blocs, le cœur de Notion",
+   intro:"Dans Notion, tout est un bloc : un titre, un paragraphe, une image, une case à cocher, un tableau. Chaque bloc se déplace, se transforme, se duplique indépendamment.",
+   points:[
+     "Tape <code>/</code> n'importe où pour ouvrir le menu d'insertion de blocs.",
+     "La <b>poignée ⠿</b> à gauche d'un bloc permet de le glisser-déposer.",
+     "Glisse un bloc à <b>côté</b> d'un autre pour créer des <b>colonnes</b>.",
+     "Un bloc Encadré (Callout) avec un emoji = l'astuce parfaite pour mettre en valeur une info.",
+     "Insère un <b>Sommaire</b> (Table of contents) pour naviguer dans une longue page."
+   ],
+   tip:"<b>/</b> est ta baguette magique. En quelques lettres tu filtres le bon type de bloc sans toucher la souris.",
+   exTitre:"Maîtrise les blocs",
+   exSteps:["Tape « / » et insère un Titre H1","Ajoute un bloc Encadré (Callout) avec un emoji","Crée 3 titres H2 puis ajoute un Sommaire tout en haut","Glisse un bloc à côté d'un autre pour créer 2 colonnes"],
+   ex:"Sur une nouvelle page : crée un titre, un callout, un sommaire avec 3 sections H2, et 2 colonnes."
+  },
+  {id:"1.3",ic:"🗂️",titre:"Les bases de données",
+   intro:"Une base de données est une collection de pages structurées que tu peux trier, filtrer et afficher de plusieurs façons. C'est ce qui fait passer Notion du bloc-notes à l'outil de gestion.",
+   points:[
+     "Chaque <b>ligne est une page</b> complète ; chaque <b>colonne est une propriété</b> (texte, date, statut, personne…).",
+     "Une même base s'affiche en plusieurs <b>vues</b> : Tableau, Board (Kanban), Calendrier, Liste, Galerie.",
+     "Les <b>filtres et tris</b> te montrent uniquement ce qui compte.",
+     "Le secret : <b>une seule base, plusieurs vues</b>. L'information n'est jamais dupliquée."
+   ],
+   tip:"Ne crée jamais deux bases pour la même donnée. <b>Change de vue, pas de base.</b>",
+   exTitre:"Ta première base multi-vues",
+   exSteps:["Crée une base « Tâches » avec une vue Tableau","Ajoute une propriété Statut (À faire / En cours / Terminé) et une Date","Saisis 5 tâches avec des statuts différents","Ajoute une vue Board (Kanban) groupée par Statut","Ajoute une vue Calendrier pour visualiser par date","Crée un filtre « Statut = En cours » sur la vue Tableau"],
+   ex:"Crée une base Tâches en vue Tableau, ajoute Statut + Date, puis crée une vue Board et une vue Calendrier."
+  },
+  {id:"1.4",ic:"📚",titre:"Les wikis & la confidentialité",
+   intro:"Un wiki transforme une page en base de connaissances structurée. Et la gestion des accès te permet de contrôler précisément qui voit quoi dans ton espace.",
+   points:[
+     "Transforme n'importe quelle page en <b>wiki</b> pour activer propriétaires et statut de vérification.",
+     "Désigne des <b>propriétaires</b> et marque les infos <b>vérifiées</b> pour donner confiance.",
+     "<b>Espace privé vs partagé</b> : les pages de ta section « Privé » ne sont visibles que par toi.",
+     "La <b>confidentialité héritée</b> : les sous-pages héritent des permissions de leur parent."
+   ],
+   tip:"Un bon wiki répond à « où est l'info ? » <b>avant même</b> qu'on pose la question.",
+   exTitre:"Wiki et gestion des accès",
+   exSteps:["Transforme une page en Wiki (via les options de page)","Désigne-toi comme propriétaire","Marque une sous-page comme « Vérifiée »","Ajoute une FAQ avec des blocs Toggle (bascule) pour les Q&R"],
+   ex:"Crée un mini-wiki avec toi comme propriétaire, une page vérifiée, et une FAQ en blocs toggle."
+  }
+]},
+{id:"m2",titre:"Module 2 · Partage & collaboration",lecons:[
+  {id:"2.1",ic:"🔗",titre:"Partager une page",
+   intro:"Notion est pensé pour le collaboratif. Le partage se fait page par page, avec un contrôle fin de qui peut faire quoi.",
+   points:[
+     "Bouton <b>Partager</b> en haut à droite : invite par e-mail ou génère un lien.",
+     "Quatre niveaux d'accès : <b>Lecture</b> · <b>Commentaire</b> · <b>Modification</b> · <b>Accès complet</b>.",
+     "<b>Publier sur le web</b> : lien consultable par n'importe qui, sans compte Notion.",
+     "Le partage est <b>hérité</b> : partager une page partage toutes ses sous-pages."
+   ],
+   tip:"Donne toujours le niveau d'accès <b>minimum nécessaire</b>. « Commentaire » suffit souvent pour une relecture.",
+   exTitre:"Partage maîtrisé",
+   exSteps:["Invite une adresse e-mail en niveau « Commentaire »","Active un lien public et teste-le en navigation privée","Vérifie que les sous-pages héritent bien des permissions"],
+   ex:"Partage une page en commentaire, active le lien public, teste-le dans une fenêtre privée."
+  },
+  {id:"2.2",ic:"💬",titre:"Commentaires & @mentions",
+   intro:"La discussion vit directement dans la page, à côté du contenu concerné. Fini les allers-retours par e-mail.",
+   points:[
+     "Sélectionne du <b>texte</b> ou un <b>bloc</b> entier pour le commenter.",
+     "<b>@mentionne</b> une personne pour la notifier, une page pour créer un lien, ou une date.",
+     "<b>Résous</b> un fil une fois traité pour garder la page propre."
+   ],
+   tip:"<b>@mention + page</b> = tu tisses des liens entre tes contenus sans jamais copier-coller d'URL.",
+   exTitre:"Commente et mentionne",
+   exSteps:["Sélectionne un texte et ajoute un commentaire","@mentionne une personne dans ce commentaire","@mentionne une autre page pour créer un lien","Résous le commentaire"],
+   ex:"Ajoute un commentaire, @mentionne une personne et une page, puis résous le fil."
+  },
+  {id:"2.3",ic:"⚡",titre:"Collaborer en temps réel",
+   intro:"Plusieurs personnes éditent la même page en même temps — chacun voit le curseur des autres, comme dans Google Docs.",
+   points:[
+     "Les modifications apparaissent <b>en direct</b>, avec les curseurs des collaborateurs visibles.",
+     "L'<b>historique des versions</b> permet de revenir en arrière à tout moment.",
+     "Parfait pour un <b>brainstorming</b> ou des notes de réunion prises à plusieurs."
+   ],
+   tip:"Pour une réunion : ouvre une page partagée et prenez les notes ensemble. Le compte-rendu est prêt à la fin.",
+   exTitre:"Édition collaborative",
+   exSteps:["Ouvre la même page dans 2 onglets et édite simultanément","Consulte l'historique des versions (menu ··· > Historique)","Essaie de restaurer une version précédente"],
+   ex:"Ouvre une page dans 2 onglets, édite des deux côtés, puis explore l'historique des versions."
+  }
+]},
+{id:"m3",titre:"Module 3 · Gérer un projet",lecons:[
+  {id:"3.1",ic:"🎯",titre:"OKR → Projets → Tâches",
+   intro:"Bien gérer un projet dans Notion, c'est d'abord relier trois niveaux : un Objectif (le « pourquoi »), des Projets (le « quoi »), des Tâches (le « comment »).",
+   points:[
+     "<b>OKR</b> = Objectif qualitatif + Résultats clés mesurables (« passer le NPS de 30 à 50 »).",
+     "<b>Projet</b> = un effort concret au service d'un objectif (« Refonte du centre d'aide »).",
+     "<b>Tâche</b> = une action unitaire qui fait avancer un projet (« Rédiger 10 articles FAQ »).",
+     "Règle d'or : chaque tâche sert un projet, chaque projet sert un objectif."
+   ],
+   tip:"Commence toujours par l'<b>objectif</b>, jamais par les tâches. Sinon tu t'agites sans avancer dans la bonne direction.",
+   exTitre:"Pose ta hiérarchie",
+   exSteps:["Rédige 1 objectif trimestriel qualitatif","Définis 2 résultats clés mesurables","Liste 2 projets qui contribuent à cet objectif","Pour chaque projet, note 3 tâches concrètes"],
+   ex:"Sur une page : écris 1 objectif, 2 résultats clés, 2 projets et leurs tâches associées."
+  },
+  {id:"3.2",ic:"🔗",titre:"Relations & rollups",
+   intro:"Dans Notion, chaque niveau est une base de données. On les connecte avec des relations : c'est ce qui transforme trois listes isolées en un vrai système de pilotage.",
+   points:[
+     "Crée 3 bases : <b>Objectifs</b>, <b>Projets</b>, <b>Tâches</b>.",
+     "Ajoute une propriété <b>Relation</b> bidirectionnelle entre chaque niveau.",
+     "Un <b>rollup</b> fait remonter une info le long de la relation (ex. nombre de tâches par projet).",
+     "Depuis un objectif, tu vois tous ses projets ; depuis un projet, toutes ses tâches."
+   ],
+   tip:"Une <b>relation</b> connecte deux fiches. Un <b>rollup</b> agrège une donnée le long de ce lien.",
+   exTitre:"Connecte tes bases",
+   exSteps:["Crée les 3 bases : Objectifs, Projets, Tâches","Ajoute une Relation bidirectionnelle Projets → Objectifs","Ajoute une Relation bidirectionnelle Tâches → Projets","Crée un rollup « Nombre de tâches » sur la base Projets","Vérifie la relation depuis une fiche Objectif"],
+   ex:"Crée les 3 bases, ajoute les relations bidirectionnelles, puis un rollup sur Projets."
+  },
+  {id:"3.3",ic:"📊",titre:"Piloter l'avancement",
+   intro:"Une fois tout relié, tu pilotes d'un coup d'œil : où en est chaque projet, quelles tâches sont en retard, quels objectifs progressent.",
+   points:[
+     "Chaque tâche : <b>Statut</b> (À faire / En cours / Terminé), <b>Responsable</b> et <b>Échéance</b>.",
+     "Vue <b>Kanban</b> par statut, vue <b>Calendrier</b> par échéance, vue filtrée « Mes tâches ».",
+     "Rollup <b>« % terminé »</b> sur le projet pour l'avancement en un chiffre.",
+     "Page <b>tableau de bord</b> qui réunit objectifs, projets actifs et tâches de la semaine."
+   ],
+   tip:"La meilleure vue est celle qu'on regarde tous les jours. Crée une vue « Aujourd'hui » et mets-la en favori.",
+   exTitre:"Monte ton tableau de bord",
+   exSteps:["Ajoute Statut, Responsable et Échéance à ta base Tâches","Crée une vue Kanban groupée par Statut","Crée une vue filtrée « Mes tâches cette semaine »","Ajoute un rollup « % terminé » sur Projets","Crée une page Tableau de bord avec les 3 bases en vue inline"],
+   ex:"Ajoute Statut+Échéance aux tâches, crée les vues Kanban et filtrée, puis monte un tableau de bord."
+  }
+]}
+];
+
+const QUIZ=[
+{q:"Comment insérer rapidement un nouveau bloc dans une page ?",opts:["Menu Fichier puis Insérer","En tapant « / »","Clic droit sur la barre latérale","Cmd/Ctrl + S"],bonne:1,exp:"« / » ouvre le menu d'insertion de tous les types de blocs."},
+{q:"Dans une base de données Notion, qu'est-ce qu'une ligne ?",opts:["Une simple cellule de texte","Une page à part entière","Une vue","Un filtre"],bonne:1,exp:"Chaque ligne est une page complète qu'on peut ouvrir et enrichir."},
+{q:"Quel raccourci ouvre la recherche rapide dans Notion ?",opts:["Cmd/Ctrl + P","Cmd/Ctrl + B","Alt + Tab","Cmd/Ctrl + N"],bonne:0,exp:"Cmd/Ctrl + P permet de retrouver n'importe quelle page instantanément."},
+{q:"Une même base de données peut être affichée…",opts:["Dans une seule vue figée","Uniquement en tableau","Dans plusieurs vues (tableau, kanban, calendrier…) sans dupliquer les données","Seulement si on la duplique"],bonne:2,exp:"C'est la force de Notion : une base, plusieurs vues, zéro duplication."},
+{q:"Pour qu'un collègue puisse relire et commenter sans modifier, quel niveau d'accès ?",opts:["Accès complet","Modification","Commentaire","Aucun"],bonne:2,exp:"« Commentaire » permet d'annoter sans changer le contenu."},
+{q:"À quoi sert un wiki dans Notion ?",opts:["À discuter en temps réel","À centraliser les connaissances avec propriétaires et infos vérifiées","À envoyer des e-mails","À créer un tunnel de vente"],bonne:1,exp:"Le wiki est une base de connaissances fiable, structurée et vérifiable."},
+{q:"Que permet l'@mention dans un commentaire Notion ?",opts:["Supprimer la page","Notifier une personne, créer un lien vers une page ou pointer une date","Changer le thème visuel","Exporter en PDF"],bonne:1,exp:"@mention notifie ou crée des liens sans jamais copier d'URL."},
+{q:"Dans la logique OKR, qu'est-ce qu'un « résultat clé » ?",opts:["Une tâche quotidienne","Une mesure chiffrée qui prouve l'atteinte de l'objectif","Le nom du projet","Un simple commentaire"],bonne:1,exp:"Le résultat clé est mesurable et prouve la progression vers l'objectif."},
+{q:"Comment relie-t-on les bases Projets et Tâches dans Notion ?",opts:["En les dupliquant","Avec une propriété de type Relation","Avec un commentaire","En les exportant"],bonne:1,exp:"La propriété Relation connecte des fiches de deux bases différentes."},
+{q:"À quoi sert un rollup dans Notion ?",opts:["À changer le thème","À agréger une information depuis une base reliée (ex. % de tâches terminées)","À supprimer une tâche","À publier sur le web"],bonne:1,exp:"Le rollup agrège et fait remonter une donnée le long d'une relation."}
+];
+
+const MOCKS={
+"0.1":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>notion.com</span></div><div class="notion-vs"><div class="vs-col old"><div class="vc-h">❌ Avant Notion</div><ul><li>Notes dans Apple Notes</li><li>Tâches dans Todoist</li><li>Docs dans Google Drive</li><li>Wiki dans Confluence</li><li>Suivi dans Excel</li></ul></div><div class="vs-col new"><div class="vc-h">✅ Avec Notion</div><ul><li>Pages & sous-pages</li><li>Bases de données (listes, kanbans…)</li><li>Wikis d'équipe</li><li>Gestion de projet</li><li>Collaboration temps réel</li></ul></div></div><div class="mock-cap">Notion remplace jusqu'à 5 outils différents dans un seul espace de travail.</div></div>`,
+"1.1":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Notion</span></div><div class="mock-body"><div class="mock-side"><div class="mock-search">🔍 Rechercher<kbd>⌘ P</kbd></div><div class="sec">Privé</div><div class="it on">🏠 Mon Espace</div><div class="it sub">📁 Projets</div><div class="it sub">🗒️ Notes</div><div class="it sub">📚 Ressources</div><div class="sec">Partagé</div><div class="it">📋 Wiki équipe</div></div><div class="mock-main"><div style="font-family:var(--display);font-size:18px;font-weight:600">🏠 Mon Espace</div><div style="color:var(--muted);margin-top:6px;font-size:12.5px">Les sous-pages s'imbriquent sous leur parent. Privé = visible par toi uniquement.</div></div></div><div class="mock-cap">Barre latérale = ta table des matières. ⌘ P pour tout retrouver.</div></div>`,
+"1.2":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Page sans titre</span></div><div class="mock-pad"><div class="mock-slash">/callout&nbsp;|</div><div class="mock-menu"><div class="mh">Blocs de base</div><div class="mi on">📣 Encadré (Callout)</div><div class="mi"><b>H1</b> Titre 1</div><div class="mi"><b>≡</b> Texte</div><div class="mi"><b>•</b> Liste à puces</div><div class="mi"><b>☑</b> Case à cocher</div><div class="mi">📑 Sommaire</div></div></div><div class="mock-cap">Tape « / » puis les premières lettres pour filtrer instantanément.</div></div>`,
+"1.3":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Tâches</span></div><div class="mock-pad"><div class="mock-tabs"><span class="on">▦ Tableau</span><span>📋 Board</span><span>📅 Calendrier</span><span>📋 Liste</span></div><table class="mock-table"><thead><tr><th>Nom</th><th>Statut</th><th>Échéance</th></tr></thead><tbody><tr><td>Rédiger la FAQ</td><td><span class="tag o">En cours</span></td><td>12 juin</td></tr><tr><td>Maquette accueil</td><td><span class="tag g">Terminé</span></td><td>5 juin</td></tr><tr><td>Relire les articles</td><td><span class="tag b">À faire</span></td><td>18 juin</td></tr></tbody></table></div><div class="mock-cap">Une seule base, plusieurs vues. Chaque ligne est une page complète.</div></div>`,
+"1.4":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Wiki équipe</span></div><div class="mock-pad"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="font-size:20px">📚</span><div><div style="font-weight:600;font-size:14px">Wiki équipe</div><div style="font-size:12px;color:var(--muted)">Propriétaire : Marie D. · Vérifié ✓</div></div></div><div style="display:flex;flex-direction:column;gap:6px"><div style="padding:8px 12px;border:1px solid var(--sage);border-radius:8px;font-size:12.5px;background:var(--sage-soft)">📄 Onboarding <span style="float:right;font-size:11px;color:var(--sage)">✓ Vérifié</span></div><div style="padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:12.5px">📄 Processus RH</div><div style="padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:12.5px">❓ FAQ</div></div></div><div class="mock-cap">Le wiki indique qui est responsable et si l'info est à jour.</div></div>`,
+"2.1":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Partager cette page</span></div><div class="mock-pad"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Inviter par e-mail</div><div style="display:flex;gap:8px"><div style="flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--muted)">collaborateur@ex.fr</div><div style="background:var(--ink);color:var(--paper);border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600">Inviter</div></div><div style="margin-top:12px;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.1em">Niveaux d'accès</div><div style="display:flex;flex-direction:column;gap:4px;margin-top:6px"><div style="padding:7px 10px;border-radius:7px;background:rgba(34,32,28,.06);font-size:12.5px;display:flex;justify-content:space-between"><span>👁 Lecture seule</span><span style="color:var(--faint)">lire</span></div><div style="padding:7px 10px;border-radius:7px;border:1.5px solid var(--ink);font-size:12.5px;display:flex;justify-content:space-between"><span>💬 Commentaire</span><span style="color:var(--faint)">lire + annoter</span></div><div style="padding:7px 10px;border-radius:7px;font-size:12.5px;display:flex;justify-content:space-between"><span>✏️ Modification</span><span style="color:var(--faint)">tout sauf inviter</span></div></div></div></div><div class="mock-cap">Minimum viable access : donne le niveau le plus bas qui suffit.</div></div>`,
+"2.2":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Page · Commentaires</span></div><div class="mock-pad"><div style="border-left:3px solid var(--accent);padding:10px 14px;margin-bottom:12px;border-radius:0 8px 8px 0;background:var(--accent-soft)"><div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px">Texte sélectionné</div><div style="font-size:13px;font-style:italic;color:var(--muted)">"Refonte du centre d'aide"</div></div><div style="border:1px solid var(--line);border-radius:10px;padding:12px"><div style="font-size:12px;font-weight:600;margin-bottom:6px">💬 Fil de commentaires</div><div style="font-size:12.5px;color:var(--muted);padding:8px 10px;background:rgba(34,32,28,.04);border-radius:7px">@Marie peut-tu relire cette section ? Deadline <b>@vendredi</b> — voir aussi <b>@Guide relecture</b></div><div style="font-size:11px;color:var(--faint);margin-top:6px;text-align:right">✓ Résolu</div></div></div><div class="mock-cap">@personne, @page, @date — tout en un seul commentaire contextuel.</div></div>`,
+"2.3":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Notes de réunion · En direct</span></div><div class="mock-pad"><div style="display:flex;gap:8px;margin-bottom:10px"><div style="width:8px;height:8px;border-radius:50%;background:#28c840;margin-top:4px;flex-shrink:0"></div><div style="font-size:12.5px;color:var(--muted)">2 personnes éditent cette page</div></div><div style="border:1px solid var(--line);border-radius:8px;overflow:hidden"><div style="padding:8px 12px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600">📝 Réunion du 12 juin</div><div style="padding:10px 12px;font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px"><div>• Point avancement sprint <span style="background:#DBEAFE;border-radius:3px;padding:1px 5px;font-size:11px;color:#1E40AF">Marie ✏️</span></div><div>• Roadmap Q3 <span style="background:#DDE7DA;border-radius:3px;padding:1px 5px;font-size:11px;color:#4E6B52">Thomas ✏️</span></div><div>• Actions à suivre</div></div></div></div><div class="mock-cap">Chaque curseur a sa couleur. Le compte-rendu se rédige à plusieurs, en direct.</div></div>`,
+"3.1":`<div class="mock"><div class="mock-pad"><div class="flow"><div class="node"><div class="lab">Objectif · OKR</div><div class="val">Améliorer la satisfaction client<small>Résultat clé : NPS 30 → 50 d'ici fin Q3</small></div></div><div class="arr"></div><div class="node"><div class="lab">Projet</div><div class="val">Refonte du centre d'aide<small>Deadline : 30 sept · 4 tâches en cours</small></div></div><div class="arr"></div><div class="node"><div class="lab">Tâche</div><div class="val">Rédiger 10 articles FAQ<small>Resp. : Léa · Échéance : 18 juin · En cours</small></div></div></div></div><div class="mock-cap">Chaque niveau répond à une question : Pourquoi ? Quoi ? Comment ?</div></div>`,
+"3.2":`<div class="mock"><div class="mock-pad"><div class="rel"><div class="tbl"><div class="tt">Objectifs</div><div class="rw">↑ NPS client</div><div class="rw">↑ CA récurrent</div></div><div class="link"><div class="ln"></div><small>Relation ↕</small></div><div class="tbl"><div class="tt">Projets</div><div class="rw">Refonte aide</div><div class="rw">Onboarding</div></div><div class="link"><div class="ln"></div><small>Relation ↕</small></div><div class="tbl"><div class="tt">Tâches</div><div class="rw">Rédiger FAQ</div><div class="rw">Filmer tuto</div><div class="rw">Tester</div></div></div></div><div class="mock-cap">Les relations sont bidirectionnelles : navigue dans les deux sens.</div></div>`,
+"3.3":`<div class="mock"><div class="mock-bar"><i></i><i></i><i></i><span>Tableau de bord · Q3</span></div><div class="mock-pad"><div class="kan"><div class="col"><div class="ch">⚪ À faire</div><div class="card">Tester le parcours</div><div class="card">Relire les articles</div></div><div class="col"><div class="ch">🟠 En cours</div><div class="card">Rédiger la FAQ<br><span style="font-size:10px;color:var(--faint)">Léa · 18 juin</span></div></div><div class="col"><div class="ch">🟢 Terminé</div><div class="card">Maquette accueil<br><span style="font-size:10px;color:var(--sage)">✓ 100%</span></div></div></div></div><div class="mock-cap">Statut + responsable + échéance = pilotage complet en un coup d'œil.</div></div>`
+};
+
+const PASS=7;
+const LECONS=MODULES.flatMap(m=>m.lecons);
+const TOTAL=LECONS.length+1; // leçons + quiz
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════ */
+const KEY="parcours_notion_v3";
+let state={
+  done:{},
+  quizBest:0,
+  quizPassed:false,
+  registered:false,
+  setupDone:false,
+  prenom:"",
+  nom:"",
+  nomComplet:"",
+  apprenantId:"",
+  exercicesUrl:""
+};
+
+function loadState(){try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
+function saveState(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+let current="home";
+
+function unitsDone(){
+  let n=LECONS.filter(l=>state.done[l.id]).length;
+  if(state.quizPassed)n++;
+  return n;
+}
+function allLessonsDone(){return LECONS.every(l=>state.done[l.id]);}
+function isComplete(){return allLessonsDone()&&state.quizPassed;}
+
+/* ═══════════════════════════════════════════════════════════
+   NOTION API CALLS (via Netlify Function)
+══════════════════════════════════════════════════════════ */
+async function callNotion(action, payload){
+  const res = await fetch(NOTION_FN, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action,...payload})
+  });
+  if(!res.ok){
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.error||"Erreur serveur");
+  }
+  return res.json();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ONBOARDING MODAL
+══════════════════════════════════════════════════════════ */
+let selectedNiveau = 1;
+
+function initModal(){
+  // Niveau stars
+  document.querySelectorAll(".star-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      selectedNiveau=parseInt(btn.dataset.n);
+      document.querySelectorAll(".star-btn").forEach((b,i)=>{
+        b.classList.toggle("active",parseInt(b.dataset.n)<=selectedNiveau);
+      });
+    });
+  });
+  // Default niveau 1 highlighted
+  document.querySelector(".star-btn[data-n='1']").classList.add("active");
+
+  document.getElementById("modalSubmit").addEventListener("click", submitModal);
+}
+
+async function submitModal(){
+  const prenom=document.getElementById("inp-prenom").value.trim();
+  const nom=document.getElementById("inp-nom").value.trim();
+  const email=document.getElementById("inp-email").value.trim();
+  const errEl=document.getElementById("modalError");
+
+  if(!prenom||!nom||!email){
+    errEl.textContent="Merci de remplir tous les champs obligatoires.";
+    errEl.classList.add("show");return;
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    errEl.textContent="L'adresse e-mail ne semble pas valide.";
+    errEl.classList.add("show");return;
+  }
+  errEl.classList.remove("show");
+
+  const btn=document.getElementById("modalSubmit");
+  btn.innerHTML=`<span class="loading-spinner"></span>Création de ton espace…`;
+  btn.disabled=true;
+
+  try{
+    const result=await callNotion("register",{prenom,nom,email,niveau:selectedNiveau});
+    state.registered=true;
+    state.prenom=prenom;
+    state.nom=nom;
+    state.nomComplet=result.nomComplet||`${prenom} ${nom}`;
+    state.apprenantId=result.apprenantId||"";
+    state.exercicesUrl=result.exercicesUrl||"";
+    saveState();
+    document.getElementById("modalOverlay").classList.add("hidden");
+    updateNotionLinks();
+    current="setup";
+    render();
+  }catch(err){
+    errEl.textContent="Erreur lors de la connexion à Notion. Réessaie dans quelques secondes.";
+    errEl.classList.add("show");
+    btn.innerHTML="Démarrer le parcours →";
+    btn.disabled=false;
+  }
+}
+
+function updateNotionLinks(){
+  if(!state.exercicesUrl) return;
+  // Sidebar link
+  const sl=document.getElementById("notionSidebarLink");
+  sl.href=state.exercicesUrl;
+  sl.classList.add("visible");
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION & RENDER
+══════════════════════════════════════════════════════════ */
+function updateProgress(){
+  const n=unitsDone();
+  const circ=2*Math.PI*27;
+  document.getElementById("ringFg").style.strokeDashoffset=circ*(1-n/TOTAL);
+  document.getElementById("pctTxt").textContent=Math.round(n/TOTAL*100)+"%";
+  document.getElementById("stepTxt").textContent=n+" / "+TOTAL+" étapes";
+}
+
+function renderNav(){
+  const nav=document.getElementById("nav");
+  let h="";
+  MODULES.forEach(m=>{
+    h+=`<div class="nav-group"><div class="gh">${m.titre}</div>`;
+    m.lecons.forEach(l=>{
+      const done=state.done[l.id]?"done":"";
+      const act=current===l.id?"active":"";
+      h+=`<button class="nav-item ${done} ${act}" data-go="${l.id}">
+        <span class="tick"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+        <span>${l.ic} ${l.titre}</span>
+      </button>`;
+    });
+    h+=`</div>`;
+  });
+  const qd=state.quizPassed?"done":"";
+  const qa=current==="quiz"?"active":"";
+  h+=`<div class="nav-group"><div class="gh">Module 4 · Validation</div>
+    <button class="nav-item ${qd} ${qa}" data-go="quiz">
+      <span class="tick"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+      <span>🎯 Quiz de validation</span>
+    </button>`;
+  if(isComplete()){
+    const ca=current==="cert"?"active":"";
+    h+=`<button class="nav-item done ${ca}" data-go="cert">
+      <span class="tick"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+      <span>🏅 Mon attestation</span>
+    </button>`;
+  }
+  h+=`</div>`;
+  nav.innerHTML=h;
+  nav.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+}
+
+function go(id){current=id;closeMenu();render();window.scrollTo(0,0);document.querySelector('.main').scrollTo(0,0);}
+
+function lessonNav(id){
+  const idx=LECONS.findIndex(l=>l.id===id);
+  const prev=idx>0?LECONS[idx-1].id:"home";
+  const next=idx<LECONS.length-1?LECONS[idx+1].id:"quiz";
+  const prevLbl=idx>0?"Précédent":"Accueil";
+  const nextLbl=idx<LECONS.length-1?"Leçon suivante":"Passer au quiz";
+  return{prev,next,prevLbl,nextLbl};
+}
+
+function render(){
+  renderNav();
+  const c=document.getElementById("content");
+
+  if(current==="home"){renderHome(c);}
+  else if(current==="setup"){renderSetup(c);}
+  else if(current==="quiz"){renderQuiz(c);}
+  else if(current==="cert"){renderCert(c);}
+  else{renderLesson(c);}
+
+  c.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+  updateProgress();
+}
+
+/* ── SETUP ─────────────────────────────────────────────── */
+function renderSetup(c){
+  const FORMATEUR_EMAIL = "morgane.eberle@live.fr";
+  c.innerHTML=`<div class="view stagger">
+    <div class="eyebrow">Avant de commencer · 5 min</div>
+    <h1>Crée ton espace<br>de travail Notion</h1>
+    <p class="lead">Avant d'entrer dans le parcours, tu vas créer ta page de travail et la partager avec moi — c'est là que je corrigerai tes exercices.</p>
+
+    <div class="setup-steps">
+
+      <div class="setup-step highlight">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <b>Ouvre Notion et crée une nouvelle page</b>
+          <p>Dans la barre latérale gauche, clique sur <strong>« + Nouvelle page »</strong>.</p>
+          <div class="step-detail">
+            Donne-lui ce titre exact : <strong>🏠 Mon Espace</strong><br>
+            Ajoute une image de couverture si tu veux — c'est ta page principale pour tout le parcours.
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <b>Partage cette page avec ton formatrice</b>
+          <p>En haut à droite de la page, clique sur <strong>« Partager »</strong>, puis invite cette adresse avec le niveau <strong>« Commentaire »</strong> :</p>
+          <div class="step-detail" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <span style="font-family:var(--mono);font-size:14px;font-weight:600">${FORMATEUR_EMAIL}</span>
+            <button class="copy-email" id="copyBtn" onclick="copyEmail()">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="9" height="9" rx="1.5"/><path d="M2 10V2a1 1 0 0 1 1-1h8"/></svg>
+              Copier
+            </button>
+          </div>
+          <p style="margin-top:8px;font-size:13px;color:var(--faint)">Le niveau « Commentaire » me permet de lire tes exercices et laisser des retours, sans modifier ton contenu.</p>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <b>Crée 3 sous-pages dans « Mon Espace »</b>
+          <p>Elles serviront tout au long du parcours. Dans ta page « Mon Espace », tape <code>/page</code> pour en créer une :</p>
+          <div class="step-detail">
+            📁 <strong>Projets</strong><br>
+            🗒️ <strong>Notes</strong><br>
+            📚 <strong>Ressources</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="setup-confirm ${state.setupDone?'checked':''}" id="setupConfirm" onclick="toggleSetup()">
+      <div class="sc-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <span>C'est fait — j'ai créé ma page et partagé avec ${FORMATEUR_EMAIL}</span>
+    </div>
+
+    <div class="nav-row" style="border-top:none;justify-content:flex-start;margin-top:8px">
+      <button class="btn primary" id="startBtn" onclick="go('home')" ${state.setupDone?'':'disabled style="opacity:.45;cursor:not-allowed"'}>
+        Commencer le parcours →
+      </button>
+    </div>
+
+  </div>`;
+}
+
+function copyEmail(){
+  const email="morgane.eberle@live.fr";
+  navigator.clipboard.writeText(email).then(()=>{
+    const btn=document.getElementById("copyBtn");
+    if(btn){btn.textContent="Copié ✓";btn.classList.add("copied");setTimeout(()=>{btn.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="9" height="9" rx="1.5"/><path d="M2 10V2a1 1 0 0 1 1-1h8"/></svg> Copier';btn.classList.remove("copied");},2000);}
+  });
+}
+
+function toggleSetup(){
+  state.setupDone=!state.setupDone;
+  saveState();
+  const conf=document.getElementById("setupConfirm");
+  const btn=document.getElementById("startBtn");
+  if(conf)conf.classList.toggle("checked",state.setupDone);
+  if(btn){
+    btn.disabled=!state.setupDone;
+    btn.style.opacity=state.setupDone?"1":"0.45";
+    btn.style.cursor=state.setupDone?"pointer":"not-allowed";
+  }
+}
+
+/* ── HOME ──────────────────────────────────────────────── */
+function renderHome(c){
+  const greet=state.prenom?`Ravi de te retrouver, ${state.prenom} 👋`:"Bienvenue dans ton parcours 👋";
+  c.innerHTML=`<div class="view stagger">
+    <div class="eyebrow">Parcours apprenant · ~2 h</div>
+    <h1>Apprendre Notion,<br>de zéro à autonome.</h1>
+    <p class="lead">${greet} Un parcours guidé, structuré et progressif — tu lis, tu pratiques dans Notion, tu valides.</p>
+    <div class="meta">
+      <div><b>4</b><span>modules</span></div>
+      <div><b>${LECONS.length}</b><span>leçons</span></div>
+      <div><b>1</b><span>quiz noté</span></div>
+      <div><b>~2h</b><span>au total</span></div>
+    </div>
+
+    ${state.exercicesUrl?`<a href="${state.exercicesUrl}" target="_blank" class="notion-exercise-link visible" style="margin:0 0 24px 0">
+      <span class="nel-ic">📝</span>
+      <div class="nel-body"><b>Ma page d'exercices Notion</b><small>Ouvrir ma page de travail personnalisée</small></div>
+      <span style="margin-left:auto;font-size:18px">→</span>
+    </a>`:""}
+
+    <div class="learn-grid">
+      <div class="learn-card"><div class="lc-ic">💡</div><h3>Découvrir</h3><p>Comprendre ce qu'est Notion et à quoi il sert vraiment.</p></div>
+      <div class="learn-card"><div class="lc-ic">🧱</div><h3>Créer</h3><p>Blocs, pages, bases de données, wikis et confidentialité.</p></div>
+      <div class="learn-card"><div class="lc-ic">🤝</div><h3>Collaborer</h3><p>Partage, accès, commentaires et édition temps réel.</p></div>
+      <div class="learn-card"><div class="lc-ic">📊</div><h3>Piloter</h3><p>OKR, relations, rollups et tableau de bord de projet.</p></div>
+    </div>
+
+    <h2 style="font-size:24px;margin-top:10px">Comment ça marche</h2>
+    <div class="how">
+      <div class="how-step"><div class="n">1</div><p>Avance <b>module par module</b>. Chaque leçon explique un concept clé, simplement.</p></div>
+      <div class="how-step"><div class="n">2</div><p>Fais le mini-exercice <b>« À toi de jouer »</b> directement dans Notion, coche quand c'est fait.</p></div>
+      <div class="how-step"><div class="n">3</div><p>Termine par le quiz. Score ≥ ${PASS}/${QUIZ.length} = ton attestation débloquée. 🏅</p></div>
+    </div>
+
+    <div class="nav-row" style="border-top:none;justify-content:flex-start">
+      <button class="btn primary" data-go="${LECONS[0].id}">Commencer le parcours →</button>
+    </div>
+  </div>`;
+}
+
+/* ── LESSON ─────────────────────────────────────────────── */
+function renderLesson(c){
+  const l=LECONS.find(x=>x.id===current);
+  const mod=MODULES.find(m=>m.lecons.some(x=>x.id===current));
+  const{prev,next,prevLbl,nextLbl}=lessonNav(current);
+  const done=state.done[current]?"done":"";
+  const stepsHtml=l.exSteps?`<ul>${l.exSteps.map(s=>`<li>${s}</li>`).join("")}</ul>`:"";
+  const notionLinkHtml=state.exercicesUrl?
+    `<a href="${state.exercicesUrl}#${l.titre.toLowerCase().replace(/[^a-z0-9]/g,'-')}" target="_blank"
+       class="notion-exercise-link visible">
+       <span class="nel-ic">📝</span>
+       <div class="nel-body"><b>Ouvrir ma page d'exercices</b><small>Complète cet exercice directement dans Notion</small></div>
+       <span style="margin-left:auto;font-size:18px">→</span>
+     </a>`:"";
+
+  c.innerHTML=`<div class="view stagger">
+    <div class="crumb">${mod.titre}</div>
+    <h2><span class="ic">${l.ic}</span>${l.titre}</h2>
+    <p class="lead" style="font-size:17px;margin-top:6px">${l.intro}</p>
+    <ul class="points">${l.points.map(p=>`<li>${p}</li>`).join("")}</ul>
+    ${MOCKS[current]||""}
+    <div class="tip"><span class="ti">💡</span><p>${l.tip}</p></div>
+    <div class="exercise ${done}" id="exBox">
+      <div class="xh">✍️ À toi de jouer</div>
+      <div class="xt">${l.exTitre}</div>
+      ${stepsHtml}
+      ${notionLinkHtml}
+      <button class="check-btn" id="exBtn">
+        <span class="cb"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+        <span id="exLbl">${done?"Fait ✓":"J'ai complété cet exercice"}</span>
+      </button>
+    </div>
+    <div class="nav-row">
+      <button class="btn" data-go="${prev}">← ${prevLbl}</button>
+      <button class="btn primary" data-go="${next}">${nextLbl} →</button>
+    </div>
+  </div>`;
+
+  document.getElementById("exBtn").onclick=()=>{
+    state.done[current]=!state.done[current];
+    document.getElementById("exBox").classList.toggle("done",state.done[current]);
+    document.getElementById("exLbl").textContent=state.done[current]?"Fait ✓":"J'ai complété cet exercice";
+    saveState();updateProgress();renderNav();
+  };
+}
+
+/* ── QUIZ ────────────────────────────────────────────────── */
+function renderQuiz(c){
+  if(!allLessonsDone()){
+    c.innerHTML=`<div class="view stagger">
+      <div class="crumb">Module 4 · Validation</div>
+      <h2><span class="ic">🎯</span>Quiz de validation</h2>
+      <p class="lead" style="font-size:17px">Le quiz se débloque une fois les ${LECONS.length} leçons terminées.</p>
+      <div class="locked-note">🔒 Encore ${LECONS.filter(l=>!state.done[l.id]).length} leçon(s) à compléter avant d'accéder au quiz.</div>
+      <div class="nav-row"><button class="btn primary" data-go="${LECONS.find(l=>!state.done[l.id]).id}">Reprendre →</button></div>
+    </div>`;
+    c.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+    return;
+  }
+
+  let answers={};
+  c.innerHTML=`<div class="view stagger">
+    <div class="crumb">Module 4 · Validation</div>
+    <h2><span class="ic">🎯</span>Quiz de validation</h2>
+    <p class="lead" style="font-size:17px">${QUIZ.length} questions · ${PASS} bonnes réponses pour décrocher ton attestation.</p>
+    <div class="result" id="result"></div>
+    <div id="quizBody">
+      ${QUIZ.map((q,i)=>`
+        <div class="q" id="q${i}">
+          <div class="qn">Question ${i+1} / ${QUIZ.length}</div>
+          <div class="qt">${q.q}</div>
+          ${q.opts.map((o,j)=>`
+            <div class="opt" data-q="${i}" data-o="${j}">
+              <span class="dot"></span><span>${o}</span>
+            </div>`).join("")}
+          <div class="qexp" id="exp${i}">${q.exp}</div>
+        </div>`).join("")}
+    </div>
+    <div class="nav-row">
+      <button class="btn" data-go="${LECONS[LECONS.length-1].id}">← Dernière leçon</button>
+      <button class="btn primary" id="submitQuiz">Valider mes réponses</button>
+    </div>
+  </div>`;
+
+  c.querySelectorAll(".opt").forEach(o=>{
+    o.onclick=()=>{
+      const qi=o.dataset.q;
+      c.querySelectorAll(`.opt[data-q="${qi}"]`).forEach(x=>x.classList.remove("sel"));
+      o.classList.add("sel");
+      answers[qi]=parseInt(o.dataset.o);
+    };
+  });
+
+  document.getElementById("submitQuiz").onclick=async()=>{
+    if(Object.keys(answers).length<QUIZ.length){alert("Réponds à toutes les questions avant de valider 🙂");return;}
+    let score=0;
+    QUIZ.forEach((q,i)=>{
+      const qEl=document.getElementById("q"+i);
+      qEl.classList.add("locked");
+      const chosen=answers[i];
+      if(chosen===q.bonne)score++;
+      qEl.querySelectorAll(".opt").forEach(o=>{
+        const j=parseInt(o.dataset.o);
+        o.classList.remove("sel");
+        if(j===q.bonne)o.classList.add("correct");
+        else if(j===chosen)o.classList.add("wrong");
+      });
+      document.getElementById("exp"+i).classList.add("show");
+    });
+
+    const passed=score>=PASS;
+    state.quizBest=Math.max(state.quizBest,score);
+    if(passed)state.quizPassed=true;
+    saveState();
+
+    const res=document.getElementById("result");
+    res.className="result show "+(passed?"pass":"fail");
+    res.innerHTML=`<div class="score">${score}/${QUIZ.length}</div>
+      <div class="msg">${passed?"Bravo, tu as validé le parcours ! 🎉 Ton attestation est débloquée.":"Presque ! Il te faut ${PASS}/${QUIZ.length}. Revois les leçons concernées et retente."}</div>
+      ${passed?`<div style="margin-top:18px"><button class="btn primary" data-go="cert">Voir mon attestation 🏅</button></div>`
+              :`<div style="margin-top:18px"><button class="btn" id="retry">Recommencer le quiz</button></div>`}`;
+    res.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+    if(!passed)document.getElementById("retry").onclick=()=>go("quiz");
+
+    // Si terminé : marquer la fin dans Notion
+    if(passed&&isComplete()&&state.apprenantId){
+      try{await callNotion("complete",{apprenantId:state.apprenantId});}catch(e){console.warn("Fin non enregistrée:",e);}
+    }
+
+    updateProgress();renderNav();
+    res.scrollIntoView({behavior:"smooth",block:"center"});
+  };
+  c.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+}
+
+/* ── CERT ────────────────────────────────────────────────── */
+function renderCert(c){
+  const today=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+  const name=state.nomComplet||state.prenom||"";
+  c.innerHTML=`<div class="view stagger">
+    <div class="cert">
+      <span class="seal">🏅</span>
+      <div class="ce">Attestation de réussite</div>
+      <h2>Débuter sur Notion</h2>
+      <div class="nm">${name}</div>
+      <p class="sub">a suivi et validé l'intégralité du parcours apprenant — fondations, collaboration et gestion de projet — avec un score de <b>${state.quizBest}/${QUIZ.length}</b> au quiz final.</p>
+      <p class="sub" style="margin-top:16px;font-size:12px;color:var(--faint)">Délivré le ${today}</p>
+    </div>
+    ${state.exercicesUrl?`<div style="text-align:center;margin-bottom:20px">
+      <a href="${state.exercicesUrl}" target="_blank" class="btn">📝 Voir ma page d'exercices Notion</a>
+    </div>`:""}
+    <div class="nav-row" style="justify-content:center;border-top:none">
+      <button class="btn" data-go="home">Retour à l'accueil</button>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE MENU
+══════════════════════════════════════════════════════════ */
+function closeMenu(){
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("scrim").classList.remove("show");
+}
+document.getElementById("menuBtn").onclick=()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("scrim").classList.toggle("show");
+};
+document.getElementById("scrim").onclick=closeMenu;
+
+/* ═══════════════════════════════════════════════════════════
+   RESET
+══════════════════════════════════════════════════════════ */
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("Réinitialiser toute ta progression ? (ton espace Notion restera intact)")){
+    state={done:{},quizBest:0,quizPassed:false,registered:false,prenom:"",nom:"",nomComplet:"",apprenantId:"",exercicesUrl:""};
+    saveState();current="home";
+    document.getElementById("notionSidebarLink").classList.remove("visible");
+    render();
+    // Réouvrir la modal
+    document.getElementById("modalOverlay").classList.remove("hidden");
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════════ */
+loadState();
+initModal();
+updateNotionLinks();
+
+// Ouvrir la modal si pas encore enregistré
+if(!state.registered){
+  document.getElementById("modalOverlay").classList.remove("hidden");
+} else if(!state.setupDone){
+  // Inscrit mais setup non validé → remettre sur l'écran setup
+  current="setup";
+}
+
+render();
+</script>
+</body>
+</html>
