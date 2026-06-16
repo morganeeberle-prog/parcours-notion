@@ -419,11 +419,11 @@ input#nameInput:focus{border-bottom-color:var(--accent)}
       </div>
     </div>
 
-    <!-- Lien Mon Espace -->
+    <!-- Lien exercices Notion -->
     <a class="notion-link-sidebar" id="notionSidebarLink" href="#" target="_blank">
-      <span class="nl-ic">🏠</span>
+      <span class="nl-ic">📋</span>
       <div class="nl-txt">
-        <b>Mon Espace Notion</b>
+        <b>Mes exercices Notion</b>
         Ouvrir ma page de travail
       </div>
     </a>
@@ -461,13 +461,13 @@ const MODULES = [
    ],
    tip:"Notion est <b>modulaire</b> : commence simple avec une page, et ajoute de la structure au fur et à mesure. Ne cherche pas à tout organiser dès le départ.",
    exTitre:"Explore l'interface",
-   exSteps:["Connecte-toi à ton compte Notion","Repère la barre latérale gauche : identifie ton workspace, tes teamspaces (si présents), et tes pages privées","Clique sur « + Nouvelle page » et crée une page test","Repère le bouton ··· en haut à droite — il donne accès aux options de la page"],
-   ex:"Explore l'interface, identifie la structure workspace / pages privées / partagées, et crée une page test."
+   exSteps:["Connecte-toi à ton compte Notion","Repère dans la barre latérale : ton workspace, tes pages privées et les pages partagées","Clique sur ··· en haut à droite d'une page — explore les options disponibles","Teste ⌘/Ctrl + P pour ouvrir la recherche rapide","Note tes premières impressions dans ta page d'exercices Notion"],
+   ex:"Explore l'interface et note tes impressions dans ta page exercices."
   }
 ]},
 {id:"m1",titre:"Module 1 · Fondations",lecons:[
   {id:"1.1",ic:"📄",titre:"Pages & sous-pages",
-   intro:"Notion s'organise en pages. Chaque page peut contenir du contenu et des sous-pages — comme un dossier qui contient des fichiers, mais en beaucoup plus flexible. Tu as déjà créé ta page « Mon Espace » dans l'étape de configuration — on va maintenant l'enrichir.",
+   intro:"Notion s'organise en pages. Chaque page peut contenir du contenu et des sous-pages — comme un dossier qui contient des fichiers, mais en beaucoup plus flexible. Ta page d'exercices est déjà créée — on va maintenant enrichir cet espace et pratiquer la navigation.",
    points:[
      "Une page peut avoir une <b>icône</b> et une <b>image de couverture</b> pour la personnaliser.",
      "Les <b>sous-pages</b> s'imbriquent : tu vois la hiérarchie dans la barre latérale.",
@@ -744,9 +744,9 @@ async function submitModal(){
 }
 
 function updateNotionLinks(){
-  if(!state.monEspaceUrl) return;
+  if(!state.exercicesUrl) return;
   const sl=document.getElementById("notionSidebarLink");
-  sl.href=state.monEspaceUrl;
+  sl.href=state.exercicesUrl;
   sl.classList.add("visible");
 }
 
@@ -822,54 +822,31 @@ function render(){
 
 /* ── SETUP ─────────────────────────────────────────────── */
 function renderSetup(c){
-  const FORMATEUR_EMAIL = "morgane.eberle@live.fr";
   c.innerHTML=`<div class="view stagger">
-    <div class="eyebrow">Avant de commencer · 10 min</div>
-    <h1>Configure ton espace<br>de travail Notion</h1>
-    <p class="lead">Avant d'entrer dans le parcours, tu vas créer ta page de travail et la partager avec ton formateur. C'est dans cette page que tu feras tous tes exercices.</p>
+    <div class="eyebrow">Avant de commencer · 2 min</div>
+    <h1>Ta page de travail<br>est prête 🎉</h1>
+    <p class="lead">Bonjour ${state.prenom} ! Ton espace d'exercices personnalisé vient d'être créé dans Notion. C'est là que tu travailleras tout au long du parcours.</p>
 
     <div class="setup-steps">
 
       <div class="setup-step highlight">
         <div class="step-num">1</div>
         <div class="step-body">
-          <b>Dans Notion, crée une nouvelle page</b>
-          <p>Dans la barre latérale gauche, clique sur <strong>« + Nouvelle page »</strong>.</p>
-          <div class="step-detail">
-            Donne-lui ce titre exact : <strong>🏠 Mon Espace</strong><br>
-            Ajoute une image de couverture si tu veux — c'est ta page principale pour tout le parcours.<br><br>
-            Crée ensuite 3 sous-pages à l'intérieur :<br>
-            📁 <strong>Projets</strong> · 🗒️ <strong>Notes</strong> · 📚 <strong>Ressources</strong>
-          </div>
+          <b>Ouvre ta page d'exercices Notion</b>
+          <p>Clique sur le lien ci-dessous pour accéder à ta page de travail personnalisée :</p>
+          ${state.exercicesUrl?`<a href="${state.exercicesUrl}" target="_blank" class="notion-exercise-link visible" style="margin-top:10px">
+            <span class="nel-ic">📋</span>
+            <div class="nel-body"><b>Mes exercices — ${state.nomComplet}</b><small>Ouvrir dans Notion →</small></div>
+          </a>`:`<div class="step-detail">Le lien sera disponible dans quelques secondes…</div>`}
+          <p style="margin-top:10px;font-size:13px;color:var(--faint)">Tu y trouveras les consignes de chaque exercice, organisées par module. Travaille directement dans les zones prévues à cet effet.</p>
         </div>
       </div>
 
       <div class="setup-step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <b>Partage cette page avec ton formateur</b>
-          <p>En haut à droite de ta page « Mon Espace », clique sur <strong>« Share »</strong>, puis invite cette adresse avec le niveau <strong>« Can comment »</strong> :</p>
-          <div class="step-detail" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-            <span style="font-family:var(--mono);font-size:14px;font-weight:600">${FORMATEUR_EMAIL}</span>
-            <button class="copy-email" id="copyBtn" onclick="copyEmail()">
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="9" height="9" rx="1.5"/><path d="M2 10V2a1 1 0 0 1 1-1h8"/></svg>
-              Copier
-            </button>
-          </div>
-          <p style="margin-top:8px;font-size:13px;color:var(--faint)">Ce niveau me permet de voir tes exercices et laisser des retours, sans modifier ton contenu.</p>
-        </div>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <b>Copie le lien de ta page « Mon Espace »</b>
-          <p>En haut à droite de ta page, clique sur <strong>···</strong> puis sur <strong>« Copy link »</strong>. Colle ce lien ci-dessous — il apparaîtra dans ta barre latérale pour y accéder rapidement pendant tout le parcours.</p>
-          <div class="step-detail" style="padding:10px 12px">
-            <input type="url" id="monEspaceInput" placeholder="https://notion.so/..." value="${state.monEspaceUrl||''}"
-              style="width:100%;font-family:var(--mono);font-size:13px;padding:9px 12px;border:1.5px solid var(--line-strong);border-radius:8px;background:var(--paper);color:var(--ink);outline:none"
-              oninput="saveMonEspace(this.value)">
-          </div>
+          <b>Garde cet onglet ouvert</b>
+          <p>Pendant le parcours, tu auras ton cours ici et ta page Notion ouverte dans un autre onglet. À chaque leçon, tu retrouveras un bouton pour accéder directement à la section exercice correspondante.</p>
         </div>
       </div>
 
@@ -877,7 +854,7 @@ function renderSetup(c){
 
     <div class="setup-confirm ${state.setupDone?'checked':''}" id="setupConfirm" onclick="toggleSetup()">
       <div class="sc-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-      <span>C'est fait — j'ai créé ma page, partagé avec ${FORMATEUR_EMAIL} et collé le lien</span>
+      <span>J'ai ouvert ma page Notion — je suis prêt(e) à commencer !</span>
     </div>
 
     <div class="nav-row" style="border-top:none;justify-content:flex-start;margin-top:8px">
@@ -887,12 +864,6 @@ function renderSetup(c){
     </div>
 
   </div>`;
-}
-
-function saveMonEspace(url){
-  state.monEspaceUrl=url.trim();
-  saveState();
-  updateNotionLinks();
 }
 function copyEmail(){
   const email="morgane.eberle@live.fr";
@@ -929,9 +900,9 @@ function renderHome(c){
       <div><b>~2h</b><span>au total</span></div>
     </div>
 
-    ${state.monEspaceUrl?`<a href="${state.monEspaceUrl}" target="_blank" class="notion-exercise-link visible" style="margin:0 0 24px 0">
-      <span class="nel-ic">🏠</span>
-      <div class="nel-body"><b>Mon Espace Notion</b><small>Ouvrir ma page de travail</small></div>
+    ${state.exercicesUrl?`<a href="${state.exercicesUrl}" target="_blank" class="notion-exercise-link visible" style="margin:0 0 24px 0">
+      <span class="nel-ic">📋</span>
+      <div class="nel-body"><b>Mes exercices Notion</b><small>Ouvrir ma page de travail</small></div>
       <span style="margin-left:auto;font-size:18px">→</span>
     </a>`:""}
 
@@ -962,11 +933,11 @@ function renderLesson(c){
   const{prev,next,prevLbl,nextLbl}=lessonNav(current);
   const done=state.done[current]?"done":"";
   const stepsHtml=l.exSteps?`<ul>${l.exSteps.map(s=>`<li>${s}</li>`).join("")}</ul>`:"";
-  const notionLinkHtml=state.monEspaceUrl?
-    `<a href="${state.monEspaceUrl}" target="_blank"
+  const notionLinkHtml=state.exercicesUrl?
+    `<a href="${state.exercicesUrl}" target="_blank"
        class="notion-exercise-link visible">
-       <span class="nel-ic">🏠</span>
-       <div class="nel-body"><b>Ouvrir Mon Espace</b><small>Fais cet exercice directement dans ta page Notion</small></div>
+       <span class="nel-ic">📋</span>
+       <div class="nel-body"><b>Ouvrir mes exercices Notion</b><small>Travaille directement dans ta page — section ${l.titre}</small></div>
        <span style="margin-left:auto;font-size:18px">→</span>
      </a>`:"";
 
@@ -1103,8 +1074,8 @@ function renderCert(c){
       <p class="sub">a suivi et validé l'intégralité du parcours apprenant — fondations, collaboration et gestion de projet — avec un score de <b>${state.quizBest}/${QUIZ.length}</b> au quiz final.</p>
       <p class="sub" style="margin-top:16px;font-size:12px;color:var(--faint)">Délivré le ${today}</p>
     </div>
-    ${state.monEspaceUrl?`<div style="text-align:center;margin-bottom:20px">
-      <a href="${state.monEspaceUrl}" target="_blank" class="btn">🏠 Voir Mon Espace Notion</a>
+    ${state.exercicesUrl?`<div style="text-align:center;margin-bottom:20px">
+      <a href="${state.exercicesUrl}" target="_blank" class="btn">📋 Voir mes exercices Notion</a>
     </div>`:""}
     <div class="nav-row" style="justify-content:center;border-top:none">
       <button class="btn" data-go="home">Retour à l'accueil</button>
