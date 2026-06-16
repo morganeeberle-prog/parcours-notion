@@ -419,11 +419,11 @@ input#nameInput:focus{border-bottom-color:var(--accent)}
       </div>
     </div>
 
-    <!-- Lien Notion exercises -->
+    <!-- Lien Mon Espace -->
     <a class="notion-link-sidebar" id="notionSidebarLink" href="#" target="_blank">
-      <span class="nl-ic">📝</span>
+      <span class="nl-ic">🏠</span>
       <div class="nl-txt">
-        <b>Mes exercices Notion</b>
+        <b>Mon Espace Notion</b>
         Ouvrir ma page de travail
       </div>
     </a>
@@ -451,32 +451,34 @@ const NOTION_FN = "/.netlify/functions/notion";
 const MODULES = [
 {id:"m0",titre:"Préambule · Qu'est-ce que Notion ?",lecons:[
   {id:"0.1",ic:"💡",titre:"Notion en 5 minutes",
-   intro:"Notion est un outil tout-en-un qui remplace à la fois tes notes, tes tableaux, tes bases de données et tes wikis — le tout dans un seul espace de travail.",
+   intro:"Notion est un outil tout-en-un qui remplace à la fois tes notes, tes tableaux, tes bases de données et tes wikis — le tout dans un seul espace de travail. Comprendre sa structure globale, c'est la clé pour bien démarrer.",
    points:[
-     "<b>Créer</b> : pages, blocs, bases de données, wikis — tout dans un seul endroit.",
-     "<b>Organiser</b> : hiérarchie de pages, tags, vues multiples sur tes données.",
+     "<b>Le workspace</b> (espace de travail) est ton environnement global — tout ce que tu crées vit dedans. Tu peux en avoir plusieurs (perso, pro).",
+     "<b>Les teamspaces</b> sont des sous-espaces thématiques au sein d'un workspace partagé — par exemple un teamspace « Marketing » et un teamspace « Produit ». Chaque teamspace a ses propres membres et permissions.",
+     "<b>Créer & organiser</b> : pages, blocs, bases de données, wikis — tout dans un seul endroit.",
      "<b>Collaborer</b> : partage, commentaires, édition en temps réel.",
-     "<b>Automatiser</b> : relations entre bases, rollups, formules, et bientôt l'IA."
+     "<b>Interconnecter</b> : relations entre bases, rollups — la vraie puissance de Notion."
    ],
-   tip:"Notion est <b>modulaire</b> : commence simple (une page de notes) et ajoute de la complexité au fur et à mesure de tes besoins.",
-   exTitre:"Crée ton compte",
-   exSteps:["Rends-toi sur <b>notion.com</b> et crée un compte gratuit","Explore la page d'accueil et repère la barre latérale gauche","Clique sur « Nouvelle page » pour créer ta toute première page"],
-   ex:"Crée un compte sur notion.com, explore l'interface 5 minutes, et crée ta première page."
+   tip:"Notion est <b>modulaire</b> : commence simple avec une page, et ajoute de la structure au fur et à mesure. Ne cherche pas à tout organiser dès le départ.",
+   exTitre:"Explore l'interface",
+   exSteps:["Connecte-toi à ton compte Notion","Repère la barre latérale gauche : identifie ton workspace, tes teamspaces (si présents), et tes pages privées","Clique sur « + Nouvelle page » et crée une page test","Repère le bouton ··· en haut à droite — il donne accès aux options de la page"],
+   ex:"Explore l'interface, identifie la structure workspace / pages privées / partagées, et crée une page test."
   }
 ]},
 {id:"m1",titre:"Module 1 · Fondations",lecons:[
   {id:"1.1",ic:"📄",titre:"Pages & sous-pages",
-   intro:"Notion s'organise en pages. Chaque page peut contenir du contenu et des sous-pages — comme un dossier qui contient des fichiers, mais en beaucoup plus flexible.",
+   intro:"Notion s'organise en pages. Chaque page peut contenir du contenu et des sous-pages — comme un dossier qui contient des fichiers, mais en beaucoup plus flexible. Tu as déjà créé ta page « Mon Espace » dans l'étape de configuration — on va maintenant l'enrichir.",
    points:[
      "Une page peut avoir une <b>icône</b> et une <b>image de couverture</b> pour la personnaliser.",
      "Les <b>sous-pages</b> s'imbriquent : tu vois la hiérarchie dans la barre latérale.",
      "Déplace une page par <b>glisser-déposer</b> dans la sidebar, ou via le menu ···",
-     "<b>⌘/Ctrl + P</b> : recherche universelle pour retrouver n'importe quelle page en 2 secondes."
+     "<b>⌘/Ctrl + P</b> : recherche universelle pour retrouver n'importe quelle page en 2 secondes.",
+     "<b>Privé vs Partagé</b> : les pages dans ta section « Privé » ne sont visibles que par toi."
    ],
    tip:"Pense à ta barre latérale comme à ta table des matières. <b>Structure d'abord, contenu ensuite.</b>",
-   exTitre:"Construis ta hiérarchie",
-   exSteps:["Crée une page « Mon Espace » avec une icône 🏠","Crée 3 sous-pages : Projets, Notes, Ressources","Déplace une sous-page par drag & drop dans la sidebar","Teste ⌘/Ctrl + P pour retrouver ta page"],
-   ex:"Crée une page racine « Mon Espace » avec 3 sous-pages, puis navigue entre elles avec ⌘ P."
+   exTitre:"Enrichis « Mon Espace »",
+   exSteps:["Ouvre ta page « Mon Espace » déjà créée","Ajoute une image de couverture (bouton « Ajouter une couverture » en haut)","Crée 3 sous-pages : 📁 Projets, 🗒️ Notes, 📚 Ressources","Déplace une sous-page par drag & drop dans la sidebar","Teste ⌘/Ctrl + P pour retrouver ta page rapidement"],
+   ex:"Enrichis ta page Mon Espace avec une couverture et 3 sous-pages, puis navigue avec ⌘ P."
   },
   {id:"1.2",ic:"🧱",titre:"Les blocs, le cœur de Notion",
    intro:"Dans Notion, tout est un bloc : un titre, un paragraphe, une image, une case à cocher, un tableau. Chaque bloc se déplace, se transforme, se duplique indépendamment.",
@@ -489,8 +491,8 @@ const MODULES = [
    ],
    tip:"<b>/</b> est ta baguette magique. En quelques lettres tu filtres le bon type de bloc sans toucher la souris.",
    exTitre:"Maîtrise les blocs",
-   exSteps:["Tape « / » et insère un Titre H1","Ajoute un bloc Encadré (Callout) avec un emoji","Crée 3 titres H2 puis ajoute un Sommaire tout en haut","Glisse un bloc à côté d'un autre pour créer 2 colonnes"],
-   ex:"Sur une nouvelle page : crée un titre, un callout, un sommaire avec 3 sections H2, et 2 colonnes."
+   exSteps:["Dans ta page Notes, tape « / » et insère un Titre H1","Ajoute un bloc Encadré (Callout) avec un emoji de ton choix","Crée 3 titres H2 puis insère un Sommaire tout en haut de la page","Glisse un bloc à côté d'un autre pour créer 2 colonnes"],
+   ex:"Dans ta page Notes : crée un titre, un callout, un sommaire avec 3 sections H2, et 2 colonnes."
   },
   {id:"1.3",ic:"🗂️",titre:"Les bases de données",
    intro:"Une base de données est une collection de pages structurées que tu peux trier, filtrer et afficher de plusieurs façons. C'est ce qui fait passer Notion du bloc-notes à l'outil de gestion.",
@@ -502,21 +504,21 @@ const MODULES = [
    ],
    tip:"Ne crée jamais deux bases pour la même donnée. <b>Change de vue, pas de base.</b>",
    exTitre:"Ta première base multi-vues",
-   exSteps:["Crée une base « Tâches » avec une vue Tableau","Ajoute une propriété Statut (À faire / En cours / Terminé) et une Date","Saisis 5 tâches avec des statuts différents","Ajoute une vue Board (Kanban) groupée par Statut","Ajoute une vue Calendrier pour visualiser par date","Crée un filtre « Statut = En cours » sur la vue Tableau"],
+   exSteps:["Dans ta page Projets, crée une base de données « Tâches » en vue Tableau","Ajoute une propriété Statut (sélection unique : À faire / En cours / Terminé) et une Date d'échéance","Saisis 5 tâches avec des statuts différents","Ajoute une vue Board (Kanban) : clique sur « + Ajouter une vue » → Board → groupe par Statut","Ajoute une vue Calendrier pour visualiser les tâches par date","Crée un filtre « Statut = En cours » sur la vue Tableau"],
    ex:"Crée une base Tâches en vue Tableau, ajoute Statut + Date, puis crée une vue Board et une vue Calendrier."
   },
   {id:"1.4",ic:"📚",titre:"Les wikis & la confidentialité",
    intro:"Un wiki transforme une page en base de connaissances structurée. Et la gestion des accès te permet de contrôler précisément qui voit quoi dans ton espace.",
    points:[
-     "Transforme n'importe quelle page en <b>wiki</b> pour activer propriétaires et statut de vérification.",
-     "Désigne des <b>propriétaires</b> et marque les infos <b>vérifiées</b> pour donner confiance.",
+     "Transforme n'importe quelle page en <b>wiki</b> via le menu <b>···</b> en haut à droite → <b>« Turn into wiki »</b>.",
+     "Désigne des <b>propriétaires</b> et marque les infos <b>vérifiées</b> pour donner confiance à l'équipe.",
      "<b>Espace privé vs partagé</b> : les pages de ta section « Privé » ne sont visibles que par toi.",
      "La <b>confidentialité héritée</b> : les sous-pages héritent des permissions de leur parent."
    ],
    tip:"Un bon wiki répond à « où est l'info ? » <b>avant même</b> qu'on pose la question.",
    exTitre:"Wiki et gestion des accès",
-   exSteps:["Transforme une page en Wiki (via les options de page)","Désigne-toi comme propriétaire","Marque une sous-page comme « Vérifiée »","Ajoute une FAQ avec des blocs Toggle (bascule) pour les Q&R"],
-   ex:"Crée un mini-wiki avec toi comme propriétaire, une page vérifiée, et une FAQ en blocs toggle."
+   exSteps:["Ouvre ta page « Ressources »","Clique sur <b>···</b> en haut à droite → <b>Turn into wiki</b>","Désigne-toi comme propriétaire de la page","Crée une sous-page « FAQ » et marque-la comme « Vérifiée »","Ajoute 3 questions/réponses avec des blocs Bascule (Toggle)"],
+   ex:"Transforme ta page Ressources en wiki via ··· → Turn into wiki, ajoute-toi comme propriétaire et crée une FAQ en blocs toggle."
   }
 ]},
 {id:"m2",titre:"Module 2 · Partage & collaboration",lecons:[
@@ -530,8 +532,8 @@ const MODULES = [
    ],
    tip:"Donne toujours le niveau d'accès <b>minimum nécessaire</b>. « Commentaire » suffit souvent pour une relecture.",
    exTitre:"Partage maîtrisé",
-   exSteps:["Invite une adresse e-mail en niveau « Commentaire »","Active un lien public et teste-le en navigation privée","Vérifie que les sous-pages héritent bien des permissions"],
-   ex:"Partage une page en commentaire, active le lien public, teste-le dans une fenêtre privée."
+   exSteps:["Ouvre ta page « Mon Espace »","Clique sur « Partager » en haut à droite","Invite morgane.eberle@live.fr avec le niveau « Commentaire »","Active un lien public (onglet Publish) et teste-le en navigation privée","Vérifie que les sous-pages héritent bien des permissions"],
+   ex:"Partage Mon Espace avec ton formateur en commentaire, active le lien public et teste-le."
   },
   {id:"2.2",ic:"💬",titre:"Commentaires & @mentions",
    intro:"La discussion vit directement dans la page, à côté du contenu concerné. Fini les allers-retours par e-mail.",
@@ -542,8 +544,8 @@ const MODULES = [
    ],
    tip:"<b>@mention + page</b> = tu tisses des liens entre tes contenus sans jamais copier-coller d'URL.",
    exTitre:"Commente et mentionne",
-   exSteps:["Sélectionne un texte et ajoute un commentaire","@mentionne une personne dans ce commentaire","@mentionne une autre page pour créer un lien","Résous le commentaire"],
-   ex:"Ajoute un commentaire, @mentionne une personne et une page, puis résous le fil."
+   exSteps:["Sélectionne un texte dans ta page Notes et ajoute un commentaire","Dans ce commentaire, @mentionne <b>morgane.eberle@live.fr</b>","Dans un autre commentaire, @mentionne ta page « Projets » pour créer un lien","Résous le premier commentaire une fois traité"],
+   ex:"Ajoute un commentaire, @mentionne morgane.eberle@live.fr et une page, puis résous le fil."
   },
   {id:"2.3",ic:"⚡",titre:"Collaborer en temps réel",
    intro:"Plusieurs personnes éditent la même page en même temps — chacun voit le curseur des autres, comme dans Google Docs.",
@@ -554,36 +556,36 @@ const MODULES = [
    ],
    tip:"Pour une réunion : ouvre une page partagée et prenez les notes ensemble. Le compte-rendu est prêt à la fin.",
    exTitre:"Édition collaborative",
-   exSteps:["Ouvre la même page dans 2 onglets et édite simultanément","Consulte l'historique des versions (menu ··· > Historique)","Essaie de restaurer une version précédente"],
+   exSteps:["Ouvre ta page Notes dans 2 onglets différents et édite simultanément","Consulte l'historique des versions (menu ··· > Version history)","Essaie de restaurer une version précédente puis annule"],
    ex:"Ouvre une page dans 2 onglets, édite des deux côtés, puis explore l'historique des versions."
   }
 ]},
 {id:"m3",titre:"Module 3 · Gérer un projet",lecons:[
   {id:"3.1",ic:"🎯",titre:"OKR → Projets → Tâches",
-   intro:"Bien gérer un projet dans Notion, c'est d'abord relier trois niveaux : un Objectif (le « pourquoi »), des Projets (le « quoi »), des Tâches (le « comment »).",
+   intro:"Les OKR (Objectives & Key Results) sont une méthode de gestion par objectifs très utilisée en équipe pour garder le cap et ne pas se perdre dans l'opérationnel. L'idée : tout ce qu'on fait doit pouvoir se rattacher à un objectif. Si une tâche ne peut pas se rattacher à un projet, ou si un projet ne peut pas se rattacher à un objectif — c'est le signal pour se poser la question de sa pertinence. Est-ce vraiment utile ?",
    points:[
-     "<b>OKR</b> = Objectif qualitatif + Résultats clés mesurables (« passer le NPS de 30 à 50 »).",
-     "<b>Projet</b> = un effort concret au service d'un objectif (« Refonte du centre d'aide »).",
-     "<b>Tâche</b> = une action unitaire qui fait avancer un projet (« Rédiger 10 articles FAQ »).",
-     "Règle d'or : chaque tâche sert un projet, chaque projet sert un objectif."
+     "<b>OKR</b> = un Objectif qualitatif et inspirant + des Résultats clés mesurables qui prouvent qu'on avance.",
+     "<b>Projet</b> = un effort concret au service d'un objectif (ex. « Lancer le nouveau site »).",
+     "<b>Tâche</b> = une action unitaire qui fait avancer un projet (ex. « Rédiger la page À propos »).",
+     "Règle d'or : si une tâche n'est rattachée à aucun projet, questionne sa pertinence avant de la faire."
    ],
    tip:"Commence toujours par l'<b>objectif</b>, jamais par les tâches. Sinon tu t'agites sans avancer dans la bonne direction.",
    exTitre:"Pose ta hiérarchie",
-   exSteps:["Rédige 1 objectif trimestriel qualitatif","Définis 2 résultats clés mesurables","Liste 2 projets qui contribuent à cet objectif","Pour chaque projet, note 3 tâches concrètes"],
-   ex:"Sur une page : écris 1 objectif, 2 résultats clés, 2 projets et leurs tâches associées."
+   exSteps:["Dans ta page Projets, rédige 1 objectif trimestriel qualitatif","Définis 2 résultats clés mesurables pour cet objectif","Liste 2 projets qui contribuent à cet objectif","Pour chaque projet, note 3 tâches concrètes","Vérifie que chaque tâche peut bien se rattacher à son projet"],
+   ex:"Dans ta page Projets : écris 1 objectif, 2 résultats clés, 2 projets et leurs tâches associées."
   },
   {id:"3.2",ic:"🔗",titre:"Relations & rollups",
-   intro:"Dans Notion, chaque niveau est une base de données. On les connecte avec des relations : c'est ce qui transforme trois listes isolées en un vrai système de pilotage.",
+   intro:"C'est LA grande force de Notion par rapport à un simple tableur ou outil de notes : la capacité à interconnecter des bases entre elles. Une relation relie deux fiches de bases différentes. Un rollup agrège une information le long de ce lien. Résultat : tes données ne sont jamais dupliquées, toujours synchronisées.",
    points:[
-     "Crée 3 bases : <b>Objectifs</b>, <b>Projets</b>, <b>Tâches</b>.",
-     "Ajoute une propriété <b>Relation</b> bidirectionnelle entre chaque niveau.",
-     "Un <b>rollup</b> fait remonter une info le long de la relation (ex. nombre de tâches par projet).",
-     "Depuis un objectif, tu vois tous ses projets ; depuis un projet, toutes ses tâches."
+     "Exemple concret : une base <b>Projets</b> reliée à une base <b>Comptes rendus de réunion</b> — depuis chaque projet tu vois tous ses CR, et depuis chaque CR tu sais à quel projet il appartient.",
+     "Pour créer une relation : <b>+ Ajouter une propriété</b> → type <b>Relation</b> → choisis la base cible → active <b>Bidirectionnelle</b>.",
+     "Un <b>rollup</b> lit une propriété depuis la base reliée (ex. compter le nombre de CR par projet).",
+     "Principe clé : <b>une info saisie une seule fois</b>, consultable depuis plusieurs endroits."
    ],
-   tip:"Une <b>relation</b> connecte deux fiches. Un <b>rollup</b> agrège une donnée le long de ce lien.",
-   exTitre:"Connecte tes bases",
-   exSteps:["Crée les 3 bases : Objectifs, Projets, Tâches","Ajoute une Relation bidirectionnelle Projets → Objectifs","Ajoute une Relation bidirectionnelle Tâches → Projets","Crée un rollup « Nombre de tâches » sur la base Projets","Vérifie la relation depuis une fiche Objectif"],
-   ex:"Crée les 3 bases, ajoute les relations bidirectionnelles, puis un rollup sur Projets."
+   tip:"Relations + rollups = zéro doublon, zéro mise à jour manuelle. C'est ici que Notion dépasse tous les autres outils.",
+   exTitre:"Connecte Projets et Comptes rendus",
+   exSteps:["Dans ta page Projets, crée une base « Mes Projets » avec les colonnes : Nom, Statut, Responsable","Crée une base « Comptes rendus » avec les colonnes : Titre, Date, Notes","Dans la base Comptes rendus, clique sur <b>+ Ajouter une propriété</b> → type <b>Relation</b> → sélectionne « Mes Projets » → active <b>Bidirectionnelle</b> → confirme","Saisis 2 projets et 3 comptes rendus, puis lie chaque CR à son projet","Dans la base Mes Projets, ajoute un <b>Rollup</b> : propriété → Comptes rendus → champ Date → fonction <b>Count</b>","Vérifie depuis une fiche Projet que tu vois bien ses CR associés"],
+   ex:"Crée les bases Projets et Comptes rendus, ajoute une relation bidirectionnelle et un rollup de comptage."
   },
   {id:"3.3",ic:"📊",titre:"Piloter l'avancement",
    intro:"Une fois tout relié, tu pilotes d'un coup d'œil : où en est chaque projet, quelles tâches sont en retard, quels objectifs progressent.",
@@ -646,7 +648,8 @@ let state={
   nom:"",
   nomComplet:"",
   apprenantId:"",
-  exercicesUrl:""
+  exercicesUrl:"",
+  monEspaceUrl:""
 };
 
 function loadState(){try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
@@ -726,6 +729,7 @@ async function submitModal(){
     state.nomComplet=result.nomComplet||`${prenom} ${nom}`;
     state.apprenantId=result.apprenantId||"";
     state.exercicesUrl=result.exercicesUrl||"";
+    state.monEspaceUrl="";
     saveState();
     document.getElementById("modalOverlay").classList.add("hidden");
     updateNotionLinks();
@@ -740,10 +744,9 @@ async function submitModal(){
 }
 
 function updateNotionLinks(){
-  if(!state.exercicesUrl) return;
-  // Sidebar link
+  if(!state.monEspaceUrl) return;
   const sl=document.getElementById("notionSidebarLink");
-  sl.href=state.exercicesUrl;
+  sl.href=state.monEspaceUrl;
   sl.classList.add("visible");
 }
 
@@ -821,20 +824,22 @@ function render(){
 function renderSetup(c){
   const FORMATEUR_EMAIL = "morgane.eberle@live.fr";
   c.innerHTML=`<div class="view stagger">
-    <div class="eyebrow">Avant de commencer · 5 min</div>
-    <h1>Crée ton espace<br>de travail Notion</h1>
-    <p class="lead">Avant d'entrer dans le parcours, tu vas créer ta page de travail et la partager avec moi — c'est là que je corrigerai tes exercices.</p>
+    <div class="eyebrow">Avant de commencer · 10 min</div>
+    <h1>Configure ton espace<br>de travail Notion</h1>
+    <p class="lead">Avant d'entrer dans le parcours, tu vas créer ta page de travail et la partager avec ton formateur. C'est dans cette page que tu feras tous tes exercices.</p>
 
     <div class="setup-steps">
 
       <div class="setup-step highlight">
         <div class="step-num">1</div>
         <div class="step-body">
-          <b>Ouvre Notion et crée une nouvelle page</b>
+          <b>Dans Notion, crée une nouvelle page</b>
           <p>Dans la barre latérale gauche, clique sur <strong>« + Nouvelle page »</strong>.</p>
           <div class="step-detail">
             Donne-lui ce titre exact : <strong>🏠 Mon Espace</strong><br>
-            Ajoute une image de couverture si tu veux — c'est ta page principale pour tout le parcours.
+            Ajoute une image de couverture si tu veux — c'est ta page principale pour tout le parcours.<br><br>
+            Crée ensuite 3 sous-pages à l'intérieur :<br>
+            📁 <strong>Projets</strong> · 🗒️ <strong>Notes</strong> · 📚 <strong>Ressources</strong>
           </div>
         </div>
       </div>
@@ -842,8 +847,8 @@ function renderSetup(c){
       <div class="setup-step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <b>Partage cette page avec ton formatrice</b>
-          <p>En haut à droite de la page, clique sur <strong>« Partager »</strong>, puis invite cette adresse avec le niveau <strong>« Commentaire »</strong> :</p>
+          <b>Partage cette page avec ton formateur</b>
+          <p>En haut à droite de ta page « Mon Espace », clique sur <strong>« Share »</strong>, puis invite cette adresse avec le niveau <strong>« Can comment »</strong> :</p>
           <div class="step-detail" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
             <span style="font-family:var(--mono);font-size:14px;font-weight:600">${FORMATEUR_EMAIL}</span>
             <button class="copy-email" id="copyBtn" onclick="copyEmail()">
@@ -851,19 +856,19 @@ function renderSetup(c){
               Copier
             </button>
           </div>
-          <p style="margin-top:8px;font-size:13px;color:var(--faint)">Le niveau « Commentaire » me permet de lire tes exercices et laisser des retours, sans modifier ton contenu.</p>
+          <p style="margin-top:8px;font-size:13px;color:var(--faint)">Ce niveau me permet de voir tes exercices et laisser des retours, sans modifier ton contenu.</p>
         </div>
       </div>
 
       <div class="setup-step">
         <div class="step-num">3</div>
         <div class="step-body">
-          <b>Crée 3 sous-pages dans « Mon Espace »</b>
-          <p>Elles serviront tout au long du parcours. Dans ta page « Mon Espace », tape <code>/page</code> pour en créer une :</p>
-          <div class="step-detail">
-            📁 <strong>Projets</strong><br>
-            🗒️ <strong>Notes</strong><br>
-            📚 <strong>Ressources</strong>
+          <b>Copie le lien de ta page « Mon Espace »</b>
+          <p>En haut à droite de ta page, clique sur <strong>···</strong> puis sur <strong>« Copy link »</strong>. Colle ce lien ci-dessous — il apparaîtra dans ta barre latérale pour y accéder rapidement pendant tout le parcours.</p>
+          <div class="step-detail" style="padding:10px 12px">
+            <input type="url" id="monEspaceInput" placeholder="https://notion.so/..." value="${state.monEspaceUrl||''}"
+              style="width:100%;font-family:var(--mono);font-size:13px;padding:9px 12px;border:1.5px solid var(--line-strong);border-radius:8px;background:var(--paper);color:var(--ink);outline:none"
+              oninput="saveMonEspace(this.value)">
           </div>
         </div>
       </div>
@@ -872,7 +877,7 @@ function renderSetup(c){
 
     <div class="setup-confirm ${state.setupDone?'checked':''}" id="setupConfirm" onclick="toggleSetup()">
       <div class="sc-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-      <span>C'est fait — j'ai créé ma page et partagé avec ${FORMATEUR_EMAIL}</span>
+      <span>C'est fait — j'ai créé ma page, partagé avec ${FORMATEUR_EMAIL} et collé le lien</span>
     </div>
 
     <div class="nav-row" style="border-top:none;justify-content:flex-start;margin-top:8px">
@@ -884,6 +889,11 @@ function renderSetup(c){
   </div>`;
 }
 
+function saveMonEspace(url){
+  state.monEspaceUrl=url.trim();
+  saveState();
+  updateNotionLinks();
+}
 function copyEmail(){
   const email="morgane.eberle@live.fr";
   navigator.clipboard.writeText(email).then(()=>{
@@ -919,9 +929,9 @@ function renderHome(c){
       <div><b>~2h</b><span>au total</span></div>
     </div>
 
-    ${state.exercicesUrl?`<a href="${state.exercicesUrl}" target="_blank" class="notion-exercise-link visible" style="margin:0 0 24px 0">
-      <span class="nel-ic">📝</span>
-      <div class="nel-body"><b>Ma page d'exercices Notion</b><small>Ouvrir ma page de travail personnalisée</small></div>
+    ${state.monEspaceUrl?`<a href="${state.monEspaceUrl}" target="_blank" class="notion-exercise-link visible" style="margin:0 0 24px 0">
+      <span class="nel-ic">🏠</span>
+      <div class="nel-body"><b>Mon Espace Notion</b><small>Ouvrir ma page de travail</small></div>
       <span style="margin-left:auto;font-size:18px">→</span>
     </a>`:""}
 
@@ -952,11 +962,11 @@ function renderLesson(c){
   const{prev,next,prevLbl,nextLbl}=lessonNav(current);
   const done=state.done[current]?"done":"";
   const stepsHtml=l.exSteps?`<ul>${l.exSteps.map(s=>`<li>${s}</li>`).join("")}</ul>`:"";
-  const notionLinkHtml=state.exercicesUrl?
-    `<a href="${state.exercicesUrl}#${l.titre.toLowerCase().replace(/[^a-z0-9]/g,'-')}" target="_blank"
+  const notionLinkHtml=state.monEspaceUrl?
+    `<a href="${state.monEspaceUrl}" target="_blank"
        class="notion-exercise-link visible">
-       <span class="nel-ic">📝</span>
-       <div class="nel-body"><b>Ouvrir ma page d'exercices</b><small>Complète cet exercice directement dans Notion</small></div>
+       <span class="nel-ic">🏠</span>
+       <div class="nel-body"><b>Ouvrir Mon Espace</b><small>Fais cet exercice directement dans ta page Notion</small></div>
        <span style="margin-left:auto;font-size:18px">→</span>
      </a>`:"";
 
@@ -1093,8 +1103,8 @@ function renderCert(c){
       <p class="sub">a suivi et validé l'intégralité du parcours apprenant — fondations, collaboration et gestion de projet — avec un score de <b>${state.quizBest}/${QUIZ.length}</b> au quiz final.</p>
       <p class="sub" style="margin-top:16px;font-size:12px;color:var(--faint)">Délivré le ${today}</p>
     </div>
-    ${state.exercicesUrl?`<div style="text-align:center;margin-bottom:20px">
-      <a href="${state.exercicesUrl}" target="_blank" class="btn">📝 Voir ma page d'exercices Notion</a>
+    ${state.monEspaceUrl?`<div style="text-align:center;margin-bottom:20px">
+      <a href="${state.monEspaceUrl}" target="_blank" class="btn">🏠 Voir Mon Espace Notion</a>
     </div>`:""}
     <div class="nav-row" style="justify-content:center;border-top:none">
       <button class="btn" data-go="home">Retour à l'accueil</button>
